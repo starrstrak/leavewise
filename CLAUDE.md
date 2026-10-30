@@ -24,7 +24,7 @@ README.md · SPEC.md · RULES.md · DESIGN.md · TESTS.md · app/ · site/ · de
 - Installer : `npm install`
 - Lancer : `npm run dev` puis http://localhost:3000 (données fictives, état dans `app/data/`)
 - Démo scriptée : `npm run demo`
-- Tests : `npm test` ; UI : `node app/test/ui-smoke.mjs http://localhost:3000` (serveur lancé) ; types : `npm run typecheck`
+- Tests : `npm test` ; UI : `node app/test/ui-smoke.mjs http://localhost:3000` (serveur lancé) ; types : `npm run typecheck` ; site : `npm run site:build` puis `npm run test:site` (serveur lancé, http://localhost:3000/site/)
 
 ## Workflow
 - Branche : `claude/serene-wozniak-2zgwtm`. Un commit par fin de phase. Pas de PR sans demande.

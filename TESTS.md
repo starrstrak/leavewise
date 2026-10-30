@@ -1,7 +1,7 @@
 # TESTS.md — journal de vérification
 
-Commande : `npm test` (36 tests, Vitest) puis `node app/test/ui-smoke.mjs <url>` (UI, Playwright).
-Sorties réelles conservées : `tests-logs/unit.log`, `tests-logs/ui-smoke.log`. Un ✅ = exécuté, sortie conservée, comparé à l'attendu.
+Commandes : `npm test` (36 tests, Vitest) ; `node app/test/ui-smoke.mjs <url>` (UI applicative) ; `npm run test:site` (site vitrine, Playwright, serveur lancé).
+Sorties réelles conservées : `tests-logs/unit.log`, `tests-logs/ui-smoke.log`, `tests-logs/site.log`. Un ✅ = exécuté, sortie conservée, comparé à l'attendu.
 Relance complète après chaque correction (non-régression) : dernier passage 36/36 + 11/11 UI (voir logs).
 
 ## Cas métier (cahier des charges Phase 6)
@@ -51,7 +51,22 @@ Relance complète après chaque correction (non-régression) : dernier passage 3
 
 Contrôle de sensibilité des tests : deux mutations du code (couverture désactivée ; stagiaire qualifié) font échouer respectivement 6 et 3 tests, puis retour à 36/36 après restauration.
 
-## Non couvert à ce stade (aucun ✅ revendiqué)
-- Site vitrine (affichage mobile/tablette/bureau, liens/ancres, FAQ, contrastes, clavier, console, chargement) : Phase 5b non commencée.
-- Interface : pas de test d'accessibilité automatisé (axe) ni de test multi-navigateur.
-- Règles légales : valeurs non validées par un juriste (voir RULES.md).
+## Site vitrine (direction A)
+Exécuté : `node site/site-tests.mjs http://localhost:3113/site/` → `tests-logs/site.log`. Itérations : 2 (1 : **test erroné**, la boucle de Tab sortait du document et testait `body`/le lien d'évitement après retour ; corrigée pour s'arrêter à la fin du cycle).
+| Exigence | Vérification réelle | Statut |
+|---|---|---|
+| Mobile 375 / tablette 768 / bureau 1280 | pas de défilement horizontal, titre et cartes visibles, nav repliée < 960 px | ✅ |
+| Liens et ancres | 6 ancres internes, 4 liens (dont `legal.html#privacy/terms/contact`) valides ; défilement sous la barre fixe | ✅ |
+| Bascule FR/DE/EN | 121 clés présentes dans les 3 langues ; 111 textes de l'accueil et 11 de `legal.html` identiques au fichier de langue, `lang` mis à jour ; sans JS = `fr.json` | ✅ |
+| Clavier | lien d'évitement en premier, 25 éléments atteignables, anneau de focus ≥ 2 px partout ; FAQ Entrée/Espace ; menu mobile Entrée/Échap | ✅ |
+| Accordéon FAQ | ouverture/fermeture souris et clavier | ✅ |
+| Contrastes | 14 paires de tokens ≥ 4,5:1 en clair (min 5,13) et sombre (min 5,94) | ✅ |
+| Console / réseau | 0 erreur, 0 requête en échec | ✅ |
+| Chargement | DOMContentLoaded et load < 100 ms en local ; 25 Ko transférés, polices incluses | ✅ (local seulement) |
+| Sémantique / alternatives | header/main/footer, un `h1`, maquette décrite, aucune image sans `alt` | ✅ |
+
+## Non couvert (aucun ✅ revendiqué)
+- Contrastes mesurés sur les tokens, pas sur le rendu pixel (dégradés, texte sur image : il n'y en a pas) ; pas d'audit axe/lecteur d'écran réel.
+- Temps de chargement mesuré en local, pas sur réseau réel ; un seul navigateur (Chromium).
+- Traductions DE/EN : relecture humaine à faire. Règles légales : non validées par un juriste (voir RULES.md).
+- Interface applicative : pas de test d'accessibilité automatisé.

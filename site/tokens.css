@@ -1,0 +1,52 @@
+/* Design tokens — direction A « Alpin ». Single source of truth for the site. */
+@font-face { font-family: "Manrope"; src: url("fonts/manrope-latin-wght-normal.woff2") format("woff2"); font-weight: 200 800; font-display: swap; }
+@font-face { font-family: "Inter"; src: url("fonts/inter-latin-wght-normal.woff2") format("woff2"); font-weight: 100 900; font-display: swap; }
+
+:root {
+  /* colour */
+  --c-bg: #f5f8fa;
+  --c-surface: #ffffff;
+  --c-surface-2: #eaf0f4;
+  --c-ink: #14213d;
+  --c-muted: #455468;
+  --c-line: #d3dde5;
+  --c-accent: #0b6f78;
+  --c-accent-ink: #ffffff;
+  --c-accent-soft: #d9f0f2;
+  --c-deep: #14213d;
+  --c-deep-ink: #eef3f8;
+  --c-ok: #17683a;
+  --c-ok-soft: #dff3e6;
+  --c-bad: #a12a2a;
+  --c-bad-soft: #f8e1e1;
+  --c-badge: #e7c66a;
+  --c-badge-ink: #14213d;
+  /* type */
+  --f-head: "Manrope", system-ui, sans-serif;
+  --f-body: "Inter", system-ui, sans-serif;
+  --fs-0: 1rem; --fs-1: 1.125rem; --fs-2: 1.375rem; --fs-3: clamp(1.6rem, 1.2rem + 1.6vw, 2.2rem); --fs-4: clamp(2.2rem, 1.4rem + 3.6vw, 3.8rem);
+  --fs-s: 0.875rem;
+  /* shape */
+  --r-s: 6px; --r-m: 10px; --r-l: 16px; --r-pill: 999px;
+  --shadow-1: 0 1px 2px rgb(20 33 61 / 0.06), 0 4px 14px rgb(20 33 61 / 0.06);
+  --shadow-2: 0 2px 4px rgb(20 33 61 / 0.08), 0 18px 40px rgb(20 33 61 / 0.14);
+  /* space */
+  --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-5: 24px; --s-6: 32px; --s-7: 48px; --s-8: 72px; --s-9: 112px;
+  --gutter: 16px; --maxw: 1120px;
+}
+@media (min-width: 768px) { :root { --gutter: 32px; } }
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --c-bg: #0b1422; --c-surface: #131f33; --c-surface-2: #1a2a44; --c-ink: #e8eef5; --c-muted: #a7b5c6; --c-line: #263754;
+    --c-accent: #52c1ca; --c-accent-ink: #08202a; --c-accent-soft: #123a45; --c-deep: #0a111d; --c-deep-ink: #e8eef5;
+    --c-ok: #7bd49a; --c-ok-soft: #173a24; --c-bad: #f08a8a; --c-bad-soft: #432020; --c-badge: #e7c66a; --c-badge-ink: #14213d;
+    --shadow-1: 0 1px 2px rgb(0 0 0 / 0.4); --shadow-2: 0 18px 40px rgb(0 0 0 / 0.5);
+  }
+}
+:root[data-theme="dark"] {
+  --c-bg: #0b1422; --c-surface: #131f33; --c-surface-2: #1a2a44; --c-ink: #e8eef5; --c-muted: #a7b5c6; --c-line: #263754;
+  --c-accent: #52c1ca; --c-accent-ink: #08202a; --c-accent-soft: #123a45; --c-deep: #0a111d; --c-deep-ink: #e8eef5;
+  --c-ok: #7bd49a; --c-ok-soft: #173a24; --c-bad: #f08a8a; --c-bad-soft: #432020; --c-badge: #e7c66a; --c-badge-ink: #14213d;
+  --shadow-1: 0 1px 2px rgb(0 0 0 / 0.4); --shadow-2: 0 18px 40px rgb(0 0 0 / 0.5);
+}

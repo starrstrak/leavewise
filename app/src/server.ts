@@ -157,7 +157,7 @@ export function createApp(store: Store, persistFile: string | null = dataFile) {
     throw new HttpError(404, 'not_found');
   }
 
-  const mime: Record<string, string> = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json' };
+  const mime: Record<string, string> = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.mjs': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.svg': 'image/svg+xml', '.woff2': 'font/woff2' };
 
   return createServer(async (req, res: ServerResponse) => {
     try {
@@ -170,9 +170,13 @@ export function createApp(store: Store, persistFile: string | null = dataFile) {
         res.end(r.text ?? JSON.stringify(r.json));
         return;
       }
-      const rel = normalize(url.pathname === '/' ? '/index.html' : url.pathname).replace(/^(\.\.[/\\])+/, '');
-      const file = join(root, 'public', rel);
-      if (!file.startsWith(join(root, 'public')) || !existsSync(file)) { res.writeHead(404); res.end('not found'); return; }
+      if (url.pathname === '/site') { res.writeHead(301, { location: '/site/' }); res.end(); return; }
+      const isSite = url.pathname === '/site' || url.pathname.startsWith('/site/');
+      const base = isSite ? join(root, '..', 'site') : join(root, 'public');
+      const path = isSite ? url.pathname.slice(5) || '/' : url.pathname;
+      const rel = normalize(path === '/' ? '/index.html' : path).replace(/^(\.\.[/\\])+/, '');
+      const file = normalize(join(base, rel));
+      if (!file.startsWith(normalize(base)) || !existsSync(file)) { res.writeHead(404); res.end('not found'); return; }
       res.writeHead(200, { 'content-type': mime[extname(file)] ?? 'application/octet-stream' });
       res.end(readFileSync(file));
     } catch (e: any) {
