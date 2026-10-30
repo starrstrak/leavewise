@@ -23,7 +23,7 @@ await p.getByRole('button', { name: /Valider la sélection/ }).click(); await p.
 await p.screenshot({ path: process.env.SHOT_DIR ? `${process.env.SHOT_DIR}/queue.png` : '/tmp/queue.png', fullPage: true });
 
 await tab(2);
-ok((await p.locator('.cal div').count()) > 20, 'coverage grid rendered');
+ok((await p.locator('.cal td').count()) > 20, 'coverage grid rendered');
 ok((await p.locator('main').innerText()).includes('Pharmacien présent ✓'), 'coverage shows pharmacist present');
 
 await pick('emp-lea'); await tab(0);

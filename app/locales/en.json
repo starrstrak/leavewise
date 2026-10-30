@@ -98,6 +98,7 @@
   "none": "—",
   "forbidden": "Access denied for this role",
   "error": "Error",
+  "actions": "Actions",
   "skip": "Skip to content"
  },
  "role": {

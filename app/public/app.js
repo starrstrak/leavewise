@@ -122,7 +122,7 @@ async function viewMe() {
         h('ul', {}, info.notifications.slice(0, 6).map((n) => h('li', {}, `${n.ts.replace('T', ' ')} — ${t('notif.' + n.kind, n.params)}`))))),
     h('section', { class: 'card' }, h('h2', {}, t('ui.new_request')), form),
     h('section', { class: 'card' }, h('h2', {}, t('ui.tab_me')),
-      h('table', {}, h('thead', {}, h('tr', {}, [t('ui.employee'), t('ui.type'), t('ui.period'), t('ui.status'), ''].map((x) => h('th', {}, x)))),
+      h('table', {}, h('thead', {}, h('tr', {}, [t('ui.employee'), t('ui.type'), t('ui.period'), t('ui.status'), t('ui.actions')].map((x, i) => h('th', {}, i === 4 ? h('span', { class: 'sr-only' }, x) : x)))),
         h('tbody', {}, reqs.requests.filter((r) => isHr() || r.employeeId === user).sort((a, c) => c.submittedAt.localeCompare(a.submittedAt)).map((r) => h('tr', {},
           h('td', {}, name(r.employeeId)), h('td', {}, t('type.' + r.type)), h('td', {}, period(r)), h('td', {}, badge(t('status.' + r.status), stCls[r.status])),
           h('td', {},
@@ -196,15 +196,18 @@ async function viewCoverage() {
   const from = now.slice(0, 10);
   const slots = await api(`/coverage?from=${from}&to=${new Date(Date.parse(from) + 27 * 86400000).toISOString().slice(0, 10)}`);
   const days = [...new Set(slots.map((s) => s.date))];
-  const grid = h('div', { class: 'cal', role: 'table' }, h('div', {}, t('ui.date')), h('div', {}, t('ui.am')), h('div', {}, t('ui.pm')));
+  const body = h('tbody', {});
   for (const d of days) {
-    grid.append(h('div', {}, d));
+    const row = h('tr', {}, h('th', { scope: 'row' }, d));
     for (const half of ['AM', 'PM']) {
       const s = slots.find((x) => x.date === d && x.half === half);
       const txt = s.status === 'closed' ? t('ui.coverage_closed') : s.status === 'ok' ? `${t('ui.coverage_ok')} (${s.qualified})` : t('ui.coverage_ko');
-      grid.append(h('div', { class: s.status }, txt));
+      row.append(h('td', { class: s.status }, txt));
     }
+    body.append(row);
   }
+  const grid = h('table', { class: 'cal' }, h('caption', { class: 'sr-only' }, t('ui.tab_coverage')),
+    h('thead', {}, h('tr', {}, [t('ui.date'), t('ui.am'), t('ui.pm')].map((x) => h('th', { scope: 'col' }, x)))), body);
   $('#main').append(h('h2', {}, t('ui.tab_coverage')), h('div', { class: 'card' }, grid));
 }
 

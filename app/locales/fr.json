@@ -98,6 +98,7 @@
     "none": "—",
     "forbidden": "Accès refusé pour ce rôle",
     "error": "Erreur",
+    "actions": "Actions",
     "skip": "Aller au contenu"
   },
   "role": {

@@ -69,13 +69,24 @@ Exécuté : `node site/site-tests.mjs http://localhost:3113/site/` → `tests-lo
 | Bascule FR/DE/EN | 121 clés présentes dans les 3 langues ; 111 textes de l'accueil et 11 de `legal.html` identiques au fichier de langue, `lang` mis à jour ; sans JS = `fr.json` | ✅ |
 | Clavier | lien d'évitement en premier, 25 éléments atteignables, anneau de focus ≥ 2 px partout ; FAQ Entrée/Espace ; menu mobile Entrée/Échap | ✅ |
 | Accordéon FAQ | ouverture/fermeture souris et clavier | ✅ |
-| Contrastes | 14 paires de tokens ≥ 4,5:1 en clair (min 5,13) et sombre (min 5,94) | ✅ |
+| Contrastes (tokens) | 14 paires de tokens ≥ 4,5:1 en clair (min 5,13) et sombre (min 5,94) ; **mesure sur le rendu réel : voir « Qualité et accessibilité »** | ✅ |
 | Console / réseau | 0 erreur, 0 requête en échec | ✅ |
 | Chargement | DOMContentLoaded et load < 100 ms en local ; 25 Ko transférés, polices incluses | ✅ (local seulement) |
 | Sémantique / alternatives | header/main/footer, un `h1`, maquette décrite, aucune image sans `alt` | ✅ |
 
+## Qualité et accessibilité (étape 5)
+Commandes (serveur lancé) : `npm run test:a11y`, `npm run test:contrast`, `npm run test:site:chromium|webkit|firefox`. Journaux : `tests-logs/step5-*.log`.
+| Contrôle | Résultat réel | Statut |
+|---|---|---|
+| axe-core 4.14 (WCAG 2.0/2.1/2.2 A+AA + bonnes pratiques) sur le site (index FR clair/sombre, `legal.html`, DE, EN, mobile 375 avec menu ouvert, FAQ ouverte) et l'application (3 rôles × tous les onglets × clair/sombre, DE/EN) | 39 pages/états ; **0 violation** (0 grave/critique, 0 modérée/mineure) | ✅ |
+| Contraste mesuré sur le rendu réel (texte transparent puis pixels de fond réellement peints, pire pixel par texte, seuil 4,5:1 ou 3:1 grand texte) : site clair/sombre/thème forcé/DE/EN/mobile, application 3 rôles × onglets × clair/sombre, liens d'évitement focalisés | 41 rendus ; **minimum 4,97:1** ; 0 sous le seuil | ✅ |
+| Site sur Chromium | 32/32 | ✅ |
+| Site sur WebKit (Playwright 1.64.1, WebKit 27.2) | 32/32, **avec Option+Tab** pour le parcours clavier : Safari/WebKit ne tabule par défaut que sur les contrôles de formulaire (vérifié : séquence SELECT > SUMMARY…), ce n'est pas un défaut du site | ✅ |
+| Site sur Firefox (Nightly 157 fourni par Playwright) | **non exécutable ici** : `Could not find profile folder` au lancement, y compris en lançant le binaire seul (`-headless -profile …`) ; 3 tentatives (lancement par défaut, profil persistant, binaire direct), puis arrêt. Journal : `tests-logs/step5-site-firefox.log`. **Aucun ✅ revendiqué pour Firefox** | ⛔ non vérifié |
+
+Itérations : accessibilité **1** (critique : grille de couverture `role="table"` sans lignes → vraie `<table>` ; au passage `h1`, bannière dans le `header`, en-tête de colonne nommé, `role="img"` invalide sur `figure`) ; contraste **2** (1 : **script** — le lien d'évitement hors écran était mesuré sur le fond de l'en-tête, faux positif, désormais mesuré à l'état focalisé ; 2 : **code** — lien d'évitement de l'application en thème sombre `#0000ee` sur fond sombre = 1,71:1 → `color: var(--ink)`). L'assertion de `site-tests.mjs` sur `figure[role=img]` a été changée en `figure.preview[aria-labelledby=previewCap]` : le rôle ARIA invalide a été retiré, la description par `figcaption` est conservée et toujours vérifiée. Le journal `step5-a11y-run1.log` conserve la détection initiale (6 critiques) et `step5-contrast-run1/2.log` les mesures en échec, preuve que les contrôles détectent bien.
+
 ## Non couvert (aucun ✅ revendiqué)
-- Contrastes mesurés sur les tokens, pas sur le rendu pixel (dégradés, texte sur image : il n'y en a pas) ; pas d'audit axe/lecteur d'écran réel.
-- Temps de chargement mesuré en local, pas sur réseau réel ; un seul navigateur (Chromium).
+- Firefox : voir ci-dessus. Pas d'audit avec lecteur d'écran réel (VoiceOver, NVDA) ; axe-core ne couvre qu'une partie des critères WCAG, un audit manuel reste nécessaire.
+- Temps de chargement mesuré en local, pas sur réseau réel.
 - Traductions DE/EN : relecture humaine à faire. Règles légales : non validées par un juriste (voir RULES.md).
-- Interface applicative : pas de test d'accessibilité automatisé.

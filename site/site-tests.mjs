@@ -1,7 +1,11 @@
-// Site tests: node site/site-tests.mjs [baseUrl]   (e.g. http://localhost:3000/site/ ; server running)
+// Site tests: [BROWSER=chromium|firefox|webkit] node site/site-tests.mjs [baseUrl]   (e.g. http://localhost:3000/site/ ; server running)
 import { createRequire } from 'node:module';
 import { readFileSync } from 'node:fs';
-const { chromium } = createRequire(import.meta.url)('playwright');
+const pw = createRequire(import.meta.url)('playwright');
+const engine = process.env.BROWSER ?? 'chromium'; // chromium | firefox | webkit
+const chromium = pw[engine];
+// Safari/WebKit on macOS only tabs through form controls by default; Option+Tab walks every focusable element
+const TAB = engine === 'webkit' ? 'Alt+Tab' : 'Tab';
 const base = (process.argv[2] ?? 'http://localhost:3000/site/').replace(/\/?$/, '/');
 let failed = 0;
 const ok = (c, msg) => { console.log(`${c ? 'PASS' : 'FAIL'} ${msg}`); if (!c) { failed++; process.exitCode = 1; } };
@@ -60,7 +64,7 @@ for (const [name, w, h] of [['mobile', 375, 800], ['tablette', 768, 1024], ['bur
   ok(bad.length === 0, `liens (${ext.join(' ')}) : ${bad.length ? bad : 'tous valides'}`);
   await p.click('a[href="#pricing"]'); await p.waitForTimeout(700);
   ok(await p.evaluate(() => { const r = document.getElementById('pricing').getBoundingClientRect(); return r.top >= 0 && r.top < 200; }), 'ancre #pricing : défilement vers la section sous la barre fixe');
-  ok(await p.evaluate(() => [...document.querySelectorAll('img')].every((i) => i.alt !== null && i.hasAttribute('alt')) && document.querySelector('figure[role=img]').getAttribute('aria-labelledby') === 'previewCap' && document.getElementById('previewCap').textContent.length > 40), 'alternatives textuelles : maquette décrite, images avec alt');
+  ok(await p.evaluate(() => [...document.querySelectorAll('img')].every((i) => i.alt !== null && i.hasAttribute('alt')) && document.querySelector('figure.preview').getAttribute('aria-labelledby') === 'previewCap' && document.getElementById('previewCap').textContent.length > 40), 'alternatives textuelles : maquette décrite, images avec alt');
   ok(await p.evaluate(() => !!document.querySelector('header') && !!document.querySelector('main') && !!document.querySelector('footer') && document.querySelectorAll('h1').length === 1 && !!document.querySelector('nav[aria-label]')), 'balises sémantiques : header/main/footer, un seul h1, nav étiquetée');
   await p.context().close();
 }
@@ -94,14 +98,14 @@ for (const [name, w, h] of [['mobile', 375, 800], ['tablette', 768, 1024], ['bur
 {
   const p = await newPage(1280, 800);
   await p.goto(base, { waitUntil: 'networkidle' });
-  await p.keyboard.press('Tab');
+  await p.keyboard.press(TAB);
   ok(await p.evaluate(() => document.activeElement.classList.contains('skip')), 'clavier : premier Tab = lien d\'évitement');
   const seen = []; let noRing = []; let firstTxt = '';
   for (let i = 0; i < 60; i++) {
     const r = await p.evaluate(() => { const e = document.activeElement; const cs = getComputedStyle(e); return { tag: e.tagName, txt: (e.textContent || e.id || '').trim().slice(0, 20), ring: cs.outlineStyle !== 'none' && parseFloat(cs.outlineWidth) >= 2, vis: e.getBoundingClientRect().width > 0 }; });
     if (r.tag === 'BODY' || (i > 0 && r.txt === firstTxt)) break; // cycle complete
     if (i === 0) firstTxt = r.txt;
-    seen.push(r.tag); if (!r.ring) noRing.push(r.txt); await p.keyboard.press('Tab');
+    seen.push(r.tag); if (!r.ring) noRing.push(r.txt); await p.keyboard.press(TAB);
   }
   ok(noRing.length === 0 && seen.includes('SUMMARY') && seen.includes('SELECT'), `clavier : ${seen.length} éléments (${seen.filter((x, i) => seen.indexOf(x) === i).join('/')}) atteignables, anneau de focus visible partout${noRing.length ? ' KO ' + noRing : ''}`);
   const s1 = p.locator('details').first().locator('summary');
