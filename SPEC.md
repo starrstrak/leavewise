@@ -69,5 +69,8 @@ Entités : Employé, Qualification, Demande d'absence, Décision, Règlement (ve
 Code : `app/src/` (`types`, `calendar`, `rules`, `balance`, `coverage`, `engine`, `replacement`, `actions`, `server`), données fictives `demo/seed.ts`, locales `app/locales/`.
 Écarts assumés : l'équité utilise des jours calendaires ; pas d'authentification réelle (choix de rôle de démo avec cookie signé, H3) ; persistance JSON mono-utilisateur.
 
+## 6b. Robustesse de l'API (étape 4)
+Validation sans dépendance (`app/src/validate.ts`) : dates réelles `AAAA-MM-JJ` (2000-2100), énumérations, booléens, tailles (texte ≤ 500, listes ≤ 200, identifiants `[A-Za-z0-9_.:-]{1,64}`), corps JSON objet de 64 Kio maximum. Codes : 400 (`invalid_json`, `invalid_date`, `invalid_value`, `text_too_long`… avec `field`), 413, 415, 422 (règle métier), 401/403 ; une erreur interne répond `internal_error` sans détail. La langue `lng` est en liste blanche (une valeur libre permettait de lire un fichier JSON arbitraire) ; la déclaration imprévue est limitée à maladie/accident (elle permettait de créer des vacances approuvées d'office). État : écriture atomique (temp, fsync, rename) ; fichier illisible conservé en `.corrupt-*`.
+
 ## 7. Décision de nommage
 L'utilisateur a demandé de garder le nom « Leavewise », identique à celui du produit de référence. Cela déroge à la règle initiale « ne pas copier le nom » : exception décidée par l'utilisateur, consignée dans CLAUDE.md. Logo, design, textes et code restent propres. **Risque à valider** : confusion avec le produit existant et droits de marque (vérifier le registre suisse IPI avant toute mise en ligne). Le site précise qu'il s'agit d'un prototype fictif.

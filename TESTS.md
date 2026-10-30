@@ -1,8 +1,8 @@
 # TESTS.md — journal de vérification
 
-Commandes : `npm test` (58 tests, Vitest) ; `node app/test/ui-smoke.mjs <url>` (UI applicative) ; `npm run test:site` (site vitrine, Playwright, serveur lancé).
+Commandes : `npm test` (68 tests, Vitest) ; `node app/test/ui-smoke.mjs <url>` (UI applicative) ; `npm run test:site` (site vitrine, Playwright, serveur lancé).
 Sorties réelles conservées dans `tests-logs/` (fichiers `stepN-*.log`, un jeu par étape ; `*.log` est ignoré par git, les journaux de l'étape en cours sont ajoutés de force au commit). Un ✅ = exécuté, sortie conservée, comparé à l'attendu.
-Relance complète après chaque correction (non-régression) : dernier passage : 58/58 unitaires, 14/14 UI, site OK (`tests-logs/step3-*.log`).
+Relance complète après chaque correction (non-régression) : dernier passage : 68/68 unitaires, 14/14 UI, site OK (`tests-logs/step4-*.log`).
 
 ## Cas métier (cahier des charges Phase 6)
 | ID | Scénario | Attendu (justification) | Obtenu | Statut | Itér. |
@@ -51,8 +51,12 @@ Relance complète après chaque correction (non-régression) : dernier passage :
 | T43-T47 | Congés spéciaux/maternité/paternité/proche aidant : paramètres, durée et « à valider » sans blocage, jours ouvrés, plafond annuel, bout en bout FR modifiable par version | ✅ | 1 |
 | T48-T50 | Rappel « 2 semaines consécutives » : 10 j / 9 j, enchaînement par week-end, refusées ignorées, visible au manager, non bloquant, seuil paramétrable | ✅ | 1 |
 | T51-T58 | Session à cookie signé : cookie absent (401 `no_session`, `x-user` inopérant), falsifié (8 variantes : signature, charge modifiée, autre secret, forme) 401 `invalid_session`, expiré 401 `session_expired` (horloge injectée, limite à la seconde), attributs HttpOnly/SameSite=Strict/Max-Age, déconnexion, rôle inconnu, Origin étranger refusé, charge du jeton minimale, secret 0600 généré/stable/régénéré, ignoré par git | ✅ | 1 |
+| T59-T65 | Entrées de l'API : JSON invalide / corps non objet / type de contenu (400, 415), limite 64 Kio (413, Content-Length et transfert fragmenté), dates (format, calendrier réel, bornes, ordre), énumérations et booléens, déclaration imprévue limitée à maladie/accident, tailles de texte/liste/identifiant, langue en liste blanche, plage de couverture ≤ 92 j, règlement (champs inconnus, nombres hors bornes, poids tous nuls) | ✅ | 1 |
+| T66-T68 | Persistance : écriture atomique (temp + fsync + rename, aucun `.tmp` résiduel), échec d'écriture sans perte, état illisible ou de forme invalide conservé en `.corrupt-*` | ✅ | 1 |
 | T32-T35 | (inchangés) rejoués avec connexion par cookie : droits par rôle toujours validés | ✅ | 1 |
 | UI | Parcours manager/employé/admin, DE/EN, console, durée par défaut « à valider par un juriste », rappel des 2 semaines | ✅ 14/14 | 2 (**test** — Léa a déjà 10 j ouvrés en attente : le rappel est correctement « satisfait » ; assertion scindée Léa/Luc) |
+
+Contrôle de sensibilité de l'étape 4 : limite de corps neutralisée → T60 échoue ; liste blanche de langue neutralisée → T64 échoue ; écriture non atomique → T67 échoue ; code restauré (68/68).
 
 Contrôle de sensibilité des tests (phase 6) : deux mutations du code (couverture désactivée ; stagiaire qualifié) font échouer respectivement 6 et 3 tests, puis retour à 36/36 après restauration.
 

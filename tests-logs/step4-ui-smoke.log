@@ -1,0 +1,14 @@
+PASS manager: triage cards displayed
+PASS manager: justification en français
+PASS manager: aucune clé de traduction brute
+PASS coverage grid rendered
+PASS coverage shows pharmacist present
+PASS employee: balance visible
+PASS employee: no audit tab
+PASS employee: 2 semaines consécutives prévues (Léa) : pas de rappel
+PASS employee: durée par défaut paternité marquée « à valider par un juriste »
+PASS employee: rappel des 2 semaines consécutives affiché (Luc)
+PASS admin: audit rows
+PASS language switch DE
+PASS language switch EN
+PASS console errors: 0 

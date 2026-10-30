@@ -1,0 +1,85 @@
+
+> leavewise-proto@0.1.0 test
+> vitest run --reporter=verbose
+
+
+ RUN  v2.1.9 /Users/utilisateur/leavewise
+
+ ✓ app/test/legal-rules.test.ts > Repos hebdomadaire (paramètre legal.weeklyRestHours, à valider par un juriste) > T37 cas passant : week-end libre (61,5 h entre ven. 18:30 et lun. 08:00)
+ ✓ app/test/legal-rules.test.ts > Repos hebdomadaire (paramètre legal.weeklyRestHours, à valider par un juriste) > T38 cas bloqué : garde de nuit samedi 20:00-dimanche 02:00 => meilleur repos 30 h < 35 h
+ ✓ app/test/legal-rules.test.ts > Repos hebdomadaire (paramètre legal.weeklyRestHours, à valider par un juriste) > T39 cas limite : exactement 35 h acceptées, 34,5 h refusées
+ ✓ app/test/legal-rules.test.ts > Repos hebdomadaire (paramètre legal.weeklyRestHours, à valider par un juriste) > T40 le seuil est un paramètre : 35 h -> 30 h rend le cas bloqué passant
+ ✓ app/test/legal-rules.test.ts > Repos hebdomadaire (paramètre legal.weeklyRestHours, à valider par un juriste) > T41 classement des remplaçants : raison « weekly_rest » explicite, candidat écarté puis admis sans le bloc
+ ✓ app/test/legal-rules.test.ts > Repos hebdomadaire (paramètre legal.weeklyRestHours, à valider par un juriste) > T42 plusieurs créneaux d'une même demande sont vérifiés ensemble (couverture)
+ ✓ app/test/legal-rules.test.ts > Durées par défaut des congés spéciaux, maternité, paternité, proche aidant (à valider par un juriste) > T43 paramètres présents pour les 4 types, marqués avec une base indicative et jamais « garantis »
+ ✓ app/test/legal-rules.test.ts > Durées par défaut des congés spéciaux, maternité, paternité, proche aidant (à valider par un juriste) > T44 le moteur affiche la durée et « à valider », sans bloquer ; dépassement et justificatif absents = avertissements
+ ✓ app/test/legal-rules.test.ts > Durées par défaut des congés spéciaux, maternité, paternité, proche aidant (à valider par un juriste) > T45 durée en jours ouvrés : 3 jours ouvrés lun-mer acceptés, jeudi-lundi = 3 j (week-end exclu)
+ ✓ app/test/legal-rules.test.ts > Durées par défaut des congés spéciaux, maternité, paternité, proche aidant (à valider par un juriste) > T46 proche aidant : plafond annuel indicatif (10 j) signalé, non bloquant
+ ✓ app/test/legal-rules.test.ts > Durées par défaut des congés spéciaux, maternité, paternité, proche aidant (à valider par un juriste) > T47 de bout en bout : décision proposée avec raisons en français, jamais « garanti », modifiable par une nouvelle version
+ ✓ app/test/legal-rules.test.ts > Rappel « au moins 2 semaines consécutives » (non bloquant) > T48 deux semaines (lun-ven x2) = 10 jours ouvrés : rappel satisfait ; 9 jours : non
+ ✓ app/test/legal-rules.test.ts > Rappel « au moins 2 semaines consécutives » (non bloquant) > T49 périodes enchaînées par un week-end comptent ensemble ; un jour ouvré entre deux les sépare ; refusées ignorées
+ ✓ app/test/legal-rules.test.ts > Rappel « au moins 2 semaines consécutives » (non bloquant) > T50 le rappel est affiché au manager (raison de la décision) et jamais bloquant ; le seuil est un paramètre
+ ✓ app/test/session.test.ts > Session de démo à cookie signé > T51 cookie absent : 401 « no_session » partout, l'ancien en-tête x-user n'ouvre plus rien
+ ✓ app/test/api-robustness.test.ts > API : entrées invalides => erreurs 4xx claires > T59 JSON invalide, corps non objet, type de contenu : 400 / 415 avec code stable, sans fuite d'exception
+ ✓ app/test/session.test.ts > Session de démo à cookie signé > T52 cookie falsifié : signature invalide, charge modifiée, autre secret, forme incorrecte => 401 « invalid_session »
+ ✓ app/test/api-robustness.test.ts > API : entrées invalides => erreurs 4xx claires > T60 limite de taille : 413 si Content-Length dépasse, et aussi en transfert fragmenté sans Content-Length
+ ✓ app/test/domain.test.ts > Triage: couverture et conflits > T01 demandes simultanées sur la même période : une seule accordée, l'autre « impossible » avec concurrent cité
+ ✓ app/test/domain.test.ts > Triage: couverture et conflits > T02 seul pharmacien du jour absent : impossible, raison de couverture et alternative « remplaçant »
+ ✓ app/test/domain.test.ts > Triage: couverture et conflits > T03 deux pharmaciens, même jour : la rotation (refus passés en été) départage
+ ✓ app/test/domain.test.ts > Triage: couverture et conflits > T04 demi-journées : 0,5 jour déduit, et seules les demi-journées travaillées comptent
+ ✓ app/test/domain.test.ts > Triage: couverture et conflits > T05 jours fériés fribourgeois : non décomptés, selon la confession paramétrée
+ ✓ app/test/domain.test.ts > Triage: couverture et conflits > T06 temps partiel : droit annuel au prorata du taux et protection des moins de 20 ans
+ ✓ app/test/domain.test.ts > Triage: couverture et conflits > T07 entrée / sortie en cours d'année, et passage du cap des 20 ans
+ ✓ app/test/domain.test.ts > Triage: couverture et conflits > T08 solde négatif : bloqué par défaut, toléré avec avertissement si le règlement l'autorise
+ ✓ app/test/domain.test.ts > Triage: couverture et conflits > T09 report de solde : plafonné, consommé en premier, perdu après l'échéance
+ ✓ app/test/domain.test.ts > Triage: couverture et conflits > T10 annulation après approbation : demande, validation, solde recrédité, remplacement annulé, tracé
+ ✓ app/test/domain.test.ts > Triage: couverture et conflits > T11 maladie pendant des vacances approuvées : jours crédités si certificat
+ ✓ app/test/domain.test.ts > Triage: couverture et conflits > T12 maladie imprévue le matin même : alerte, besoin créé, offre immédiate au meilleur candidat
+ ✓ app/test/domain.test.ts > Triage: couverture et conflits > T13 remplaçant qualifié indisponible : escalade manager puis RH, plan B avec impact visible
+ ✓ app/test/domain.test.ts > Triage: couverture et conflits > T14 remplaçant lui-même absent : écarté avec motif
+ ✓ app/test/domain.test.ts > Triage: couverture et conflits > T15 stagiaire / apprentie jamais proposés comme personne qualifiée ; comptent dans l'effectif seulement
+ ✓ app/test/domain.test.ts > Triage: couverture et conflits > T16 repos quotidien non respecté : candidat écarté (garde de nuit la veille)
+ ✓ app/test/domain.test.ts > Triage: couverture et conflits > T17 égalité de score : signalée et départagée par l'ordre de dépôt
+ ✓ app/test/domain.test.ts > Triage: couverture et conflits > T18 demande urgente contre règlement : bloquée par la période de blocage, décision humaine tracée
+ ✓ app/test/domain.test.ts > Triage: couverture et conflits > T19 changement de règlement en cours d'année : version appliquée selon la date de dépôt, non rétroactive
+ ✓ app/test/domain.test.ts > Triage: couverture et conflits > T20 manager absent : délégation, puis escalade RH si le délégué est absent aussi
+ ✓ app/test/domain.test.ts > Triage: couverture et conflits > T21 employé avec plusieurs managers : tous notifiés, n'importe lequel peut valider, auteur tracé
+ ✓ app/test/domain.test.ts > Triage: couverture et conflits > T22 demande déposée après la date limite (été)
+ ✓ app/test/domain.test.ts > Triage: couverture et conflits > T23 période de blocage : refus automatique avec raison et décalage proposé
+ ✓ app/test/domain.test.ts > Triage: couverture et conflits > T24 fermeture collective : hors couverture, déduite du solde sans double décompte
+ ✓ app/test/domain.test.ts > Triage: couverture et conflits > T25 critères sensibles : désactivés par défaut, bonus uniquement, jamais pénalisant, masqués aux managers
+ ✓ app/test/flows.test.ts > Tri par lot, ajustement humain, cascade > T26 une décision « impossible » ne se valide pas en lot ; le forçage exige un motif
+ ✓ app/test/flows.test.ts > Tri par lot, ajustement humain, cascade > T27 lot : validation de plusieurs décisions ; l'employé n'est notifié qu'après validation
+ ✓ app/test/flows.test.ts > Tri par lot, ajustement humain, cascade > T28 ajustement humain : aperçu puis application, cascade recalculée et affichée
+ ✓ app/test/flows.test.ts > Tri par lot, ajustement humain, cascade > T29 mode automatique : seules les demandes à risque nul sont validées, et seulement si l'admin l'active
+ ✓ app/test/flows.test.ts > Tri par lot, ajustement humain, cascade > T30 remplacement : accepter comble le trou ; refuser passe au suivant ; relance puis expiration
+ ✓ app/test/flows.test.ts > Tri par lot, ajustement humain, cascade > T31 données de démo : tri complet, chaque décision est justifiée
+ ✓ app/test/flows.test.ts > Séparation des rôles > T36 nul ne décide de sa propre demande (validation ou forçage)
+ ✓ app/test/api-robustness.test.ts > API : entrées invalides => erreurs 4xx claires > T61 dates : format, calendrier réel, bornes, ordre
+ ✓ app/test/api-robustness.test.ts > API : entrées invalides => erreurs 4xx claires > T62 énumérations et types : type d'absence, demi-journée, action, booléens, déclaration imprévue limitée à maladie/accident
+ ✓ app/test/api-robustness.test.ts > API : entrées invalides => erreurs 4xx claires > T63 tailles : texte, listes, identifiants ; requête valide acceptée (201)
+ ✓ app/test/api-robustness.test.ts > API : entrées invalides => erreurs 4xx claires > T64 paramètres d'URL : langue en liste blanche (aucune lecture de fichier arbitraire), plage de couverture bornée
+ ✓ app/test/session.test.ts > Session de démo à cookie signé > T53 cookie expiré : 401 « session_expired » après la durée, nouvelle connexion possible
+ ✓ app/test/session.test.ts > Session de démo à cookie signé > T54 attributs du cookie (HttpOnly, SameSite=Strict, durée) ; déconnexion ; rôle inconnu refusé
+ ✓ app/test/session.test.ts > Session de démo à cookie signé > T55 requête inter-sites refusée (Origin différent de Host) ; même origine acceptée
+ ✓ app/test/session.test.ts > Session de démo à cookie signé > T56 jeton : durée vérifiée à la seconde, charge limitée à l'identifiant et à l'expiration (aucune donnée personnelle)
+ ✓ app/test/session.test.ts > Secret de signature local > T57 généré au premier lancement (0600), stable ensuite, régénéré s'il est trop court
+ ✓ app/test/session.test.ts > Secret de signature local > T58 le fichier de secret par défaut est ignoré par git et absent de l'index
+ ✓ app/test/flows.test.ts > API : droits par rôle et confidentialité > T32 un·e employé·e ne voit ni la file de tri ni les données des collègues
+stderr | app/test/api-robustness.test.ts > Persistance : écriture atomique et état illisible > T68 fichier d'état illisible ou de forme invalide : conservé à côté (.corrupt-*), la démo repart des données fictives
+state file unreadable (Expected property name or '}' in JSON at position 1 (line 1 column 2)); kept as /var/folders/ry/9wmck9hn3l968lhtjgwzwltw0000gn/T/lw-api-autkKg/garbage.json.corrupt-1793399660786
+state file unreadable (invalid_state_shape); kept as /var/folders/ry/9wmck9hn3l968lhtjgwzwltw0000gn/T/lw-api-autkKg/shape.json.corrupt-1793399660787
+
+ ✓ app/test/flows.test.ts > API : droits par rôle et confidentialité > T33 manager : tri, justifications en français, score sans critère sensible ; RH voit le critère
+ ✓ app/test/flows.test.ts > API : droits par rôle et confidentialité > T34 exports réservés RH/admin ; audit horodaté et signé
+ ✓ app/test/flows.test.ts > API : droits par rôle et confidentialité > T35 règlement modifiable par l'admin seulement, nouvelle version tracée
+ ✓ app/test/api-robustness.test.ts > API : entrées invalides => erreurs 4xx claires > T65 règlement : champs inconnus, nombres négatifs ou démesurés, date invalide refusés ; valeur correcte versionnée
+ ✓ app/test/api-robustness.test.ts > Persistance : écriture atomique et état illisible > T66 après une requête, le fichier d'état est complet et aucun fichier temporaire ne reste
+ ✓ app/test/api-robustness.test.ts > Persistance : écriture atomique et état illisible > T67 une écriture qui échoue laisse l'ancien contenu intact et ne laisse pas de fichier temporaire
+ ✓ app/test/api-robustness.test.ts > Persistance : écriture atomique et état illisible > T68 fichier d'état illisible ou de forme invalide : conservé à côté (.corrupt-*), la démo repart des données fictives
+
+ Test Files  5 passed (5)
+      Tests  68 passed (68)
+   Start at  23:34:20
+   Duration  437ms (transform 228ms, setup 0ms, collect 444ms, tests 428ms, environment 0ms, prepare 205ms)
+

@@ -1,7 +1,7 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { closeSync, existsSync, fsyncSync, mkdirSync, openSync, readFileSync, renameSync, rmSync, writeSync } from 'node:fs';
 import { createServer, IncomingMessage, ServerResponse } from 'node:http';
 import { randomBytes } from 'node:crypto';
-import { extname, join, normalize } from 'node:path';
+import { dirname, extname, join, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import * as A from './actions.js';
 import { balanceOf } from './balance.js';
@@ -11,6 +11,7 @@ import { locale, Lang } from './i18n.js';
 import { rankForRequest } from './actions.js';
 import { balancesFor, canSeeEmployee, viewDecision } from './views.js';
 import { buildDemoState, DEMO_NOW } from '../../demo/seed.js';
+import * as V from './validate.js';
 import { checkToken, cookieHeader, DEFAULT_TTL_SECONDS, loadSecret, makeToken, readCookie } from './session.js';
 import type { Half, State } from './types.js';
 
@@ -22,8 +23,29 @@ const secretFile = join(dataDir, 'session.secret');
 export interface Store { state: State; now: string }
 
 export function loadStore(file = dataFile): Store {
-  if (file && existsSync(file)) return JSON.parse(readFileSync(file, 'utf8'));
+  if (file && existsSync(file)) {
+    try {
+      const st = JSON.parse(readFileSync(file, 'utf8'));
+      if (st && typeof st.now === 'string' && Array.isArray(st.state?.employees)) return st;
+      throw new Error('invalid_state_shape');
+    } catch (e) {
+      // an unreadable state file is kept aside (never silently overwritten) and the demo restarts from fictional data
+      const aside = `${file}.corrupt-${Date.now()}`;
+      renameSync(file, aside);
+      console.error(`state file unreadable (${(e as Error).message}); kept as ${aside}`);
+    }
+  }
   return { state: buildDemoState(), now: DEMO_NOW };
+}
+
+/** Atomic write: temp file in the same directory, fsync, then rename (a crash never leaves a half-written state). */
+export function writeFileAtomic(file: string, data: string) {
+  mkdirSync(dirname(file), { recursive: true });
+  const tmp = `${file}.${process.pid}.tmp`;
+  const fd = openSync(tmp, 'w', 0o600);
+  try { writeSync(fd, data); fsyncSync(fd); } catch (e) { closeSync(fd); rmSync(tmp, { force: true }); throw e; }
+  closeSync(fd);
+  renameSync(tmp, file);
 }
 
 class HttpError extends Error { constructor(public status: number, public code: string) { super(code); } }
@@ -47,11 +69,11 @@ export function createApp(store: Store, persistFile: string | null = dataFile, o
   const secret = opts.secret ?? randomBytes(32).toString('hex');
   const ttl = opts.ttlSeconds ?? DEFAULT_TTL_SECONDS;
   const nowSec = () => Math.floor((opts.clock ?? Date.now)() / 1000);
-  const save = () => { if (persistFile) { mkdirSync(dataDir, { recursive: true }); writeFileSync(persistFile, JSON.stringify(store)); } };
+  const save = () => { if (persistFile) writeFileAtomic(persistFile, JSON.stringify(store)); };
 
   async function api(req: IncomingMessage, url: URL, body: any): Promise<{ status?: number; json?: unknown; text?: string; type?: string; headers?: Record<string, string> }> {
     const s = store.state, now = store.now;
-    const lng = (url.searchParams.get('lng') ?? 'fr') as Lang;
+    const lng: Lang = V.lang(url.searchParams.get('lng'));
     const route = `${req.method} ${url.pathname}`;
     if (route === 'GET /healthz') return { json: { ok: true } };
     if (route === 'GET /api/locale') return { json: locale(lng) };
@@ -86,8 +108,9 @@ export function createApp(store: Store, persistFile: string | null = dataFile, o
         return { json: { requests: vis, balances: balancesFor(s, now, me) } };
       }
       case 'POST /api/requests': {
-        const empId = hr && body.employeeId ? body.employeeId : me.id;
-        const a = A.submitRequest(s, { ...body, employeeId: empId }, now, me.id);
+        const inp = V.submitInput(body);
+        const empId = hr && inp.employeeId ? inp.employeeId : me.id;
+        const a = A.submitRequest(s, { ...inp, employeeId: empId }, now, me.id);
         save(); return { status: 201, json: a };
       }
       case 'GET /api/decisions': {
@@ -100,22 +123,26 @@ export function createApp(store: Store, persistFile: string | null = dataFile, o
       }
       case 'POST /api/triage': {
         need(mgr);
+        const auto = V.opt(body, 'auto', V.bool);
         A.runTriage(s, now, me.id);
-        if (body?.auto) A.autoValidate(s, now);
+        if (auto) A.autoValidate(s, now);
         save();
         return { json: s.decisions.filter((d) => d.status === 'proposed').map((d) => viewDecision(d, me, lng)) };
       }
       case 'POST /api/decisions/validate': {
         need(mgr);
-        const r = A.validateDecisions(s, body.ids ?? [], me.id, now); save(); return { json: r };
+        const r = A.validateDecisions(s, V.idList(body.ids, 'ids'), me.id, now); save(); return { json: r };
       }
       case 'POST /api/decisions/override': {
         need(mgr);
-        const r = A.overrideDecision(s, { ...body, actor: me.id }, now, !!body.preview); if (!body.preview) save(); return { json: r };
+        const o = V.overrideInput(body);
+        const r = A.overrideDecision(s, { ...o, actor: me.id }, now, !!o.preview); if (!o.preview) save(); return { json: r };
       }
       case 'GET /api/coverage': {
-        const from = url.searchParams.get('from') ?? now.slice(0, 10);
-        const to = url.searchParams.get('to') ?? addDays(from, 30);
+        const from = V.isoDate(url.searchParams.get('from') ?? now.slice(0, 10), 'from');
+        const to = V.isoDate(url.searchParams.get('to') ?? addDays(from, 30), 'to');
+        if (to < from) throw new V.ValidationError('invalid_range', 'to');
+        if (to > addDays(from, 92)) throw new V.ValidationError('range_too_long', 'to');
         const ctx = makeCtx(s, A.currentRules(s, now));
         const abs = activeAbsences(ctx);
         const out: any[] = [];
@@ -127,8 +154,9 @@ export function createApp(store: Store, persistFile: string | null = dataFile, o
         return { json: out };
       }
       case 'POST /api/unplanned': {
-        need(mgr || body.employeeId === me.id);
-        const r = A.declareUnplanned(s, body, me.id, now); save(); return { status: 201, json: r };
+        const u = V.unplannedInput(body);
+        need(mgr || u.employeeId === me.id);
+        const r = A.declareUnplanned(s, u, me.id, now); save(); return { status: 201, json: r };
       }
       case 'GET /api/replacements': {
         const mine = hr || mgr;
@@ -141,31 +169,32 @@ export function createApp(store: Store, persistFile: string | null = dataFile, o
       case 'GET /api/notifications': return { json: s.notifications.filter((n) => n.to === me.id) };
       case 'PUT /api/rules': {
         need(me.role === 'admin');
-        const v = A.addRulesVersion(s, body, me.id, now); save(); return { json: v };
+        const v = A.addRulesVersion(s, V.rulesPatch(body) as any, me.id, now); save(); return { json: v };
       }
       case 'GET /api/rules': { need(hr); return { json: s.rulesVersions } };
       case 'POST /api/consent': {
-        A.setConsent(s, me.id, body, me.id, now); save(); return { json: s.sensitive.find((x) => x.employeeId === me.id) };
+        A.setConsent(s, me.id, V.consentInput(body), me.id, now); save(); return { json: s.sensitive.find((x) => x.employeeId === me.id) };
       }
-      case 'POST /api/clock': { need(me.role === 'admin'); store.now = String(body.now); save(); return { json: { now: store.now } }; }
+      case 'POST /api/clock': { need(me.role === 'admin'); store.now = V.isoDateTime(body.now, 'now'); save(); return { json: { now: store.now } }; }
       case 'POST /api/reset': { need(me.role === 'admin'); store.state = buildDemoState(); store.now = DEMO_NOW; save(); return { json: { ok: true } }; }
     }
     // parametric routes
     if (seg[1] === 'requests' && seg[2] && req.method === 'POST') {
+      V.id(seg[2], 'id');
       const a = s.absences.find((x) => x.id === seg[2]);
       if (!a) throw new HttpError(404, 'unknown_request');
       const own = a.employeeId === me.id;
       if (seg[3] === 'withdraw') { need(own || hr); A.withdrawRequest(s, a.id, me.id, now); }
-      else if (seg[3] === 'cancel-request') { need(own || hr); A.requestCancellation(s, a.id, me.id, now, body?.reason); }
-      else if (seg[3] === 'cancel-decide') { need(mgr); A.decideCancellation(s, a.id, !!body.accept, me.id, now, body.reason); }
+      else if (seg[3] === 'cancel-request') { need(own || hr); A.requestCancellation(s, a.id, me.id, now, V.opt(body, 'reason', (v, f) => V.text(v, f))); }
+      else if (seg[3] === 'cancel-decide') { need(mgr); A.decideCancellation(s, a.id, V.bool(body.accept, 'accept'), me.id, now, V.text(body.reason, 'reason')); }
       else throw new HttpError(404, 'not_found');
       save(); return { json: a };
     }
     if (seg[1] === 'replacements' && seg[2] && req.method === 'POST') {
-      const id = seg[2];
+      const id = V.id(seg[2], 'id');
       if (seg[3] === 'offer') { need(mgr); const r = A.offerNext(s, id, now, me.id); save(); return { json: r }; }
-      if (seg[3] === 'respond') { const r = A.respondOffer(s, id, me.id, !!body.accept, now); save(); return { json: r }; }
-      if (seg[3] === 'plan-b') { need(mgr); const r = A.applyPlanB(s, id, body.option, me.id, now, body.reason); save(); return { json: r }; }
+      if (seg[3] === 'respond') { const r = A.respondOffer(s, id, me.id, V.bool(body.accept, 'accept'), now); save(); return { json: r }; }
+      if (seg[3] === 'plan-b') { need(mgr); const r = A.applyPlanB(s, id, V.oneOf(body.option, ['reduced_hours', 'closure'] as const, 'option'), me.id, now, V.text(body.reason, 'reason')); save(); return { json: r }; }
     }
     if (seg[1] === 'export' && req.method === 'GET') {
       need(hr);
@@ -194,8 +223,21 @@ export function createApp(store: Store, persistFile: string | null = dataFile, o
           let host = ''; try { host = new URL(origin).host; } catch { /* "null" origin */ }
           if (host !== req.headers.host) throw new HttpError(403, 'bad_origin');
         }
-        let raw = ''; for await (const c of req) raw += c;
-        const body = raw ? JSON.parse(raw) : {};
+        const declared = Number(req.headers['content-length'] ?? 0);
+        if (declared > V.MAX_BODY_BYTES) throw new HttpError(413, 'payload_too_large');
+        let size = 0; const chunks: Buffer[] = [];
+        for await (const c of req) {
+          size += (c as Buffer).length;
+          if (size > V.MAX_BODY_BYTES) throw new HttpError(413, 'payload_too_large');
+          chunks.push(c as Buffer);
+        }
+        const raw = Buffer.concat(chunks).toString('utf8');
+        let body: any = {};
+        if (raw.trim()) {
+          if (!String(req.headers['content-type'] ?? '').includes('application/json')) throw new HttpError(415, 'unsupported_media_type');
+          try { body = JSON.parse(raw); } catch { throw new HttpError(400, 'invalid_json'); }
+          V.body(body);
+        }
         const r = await api(req, url, body);
         res.writeHead(r.status ?? 200, { 'content-type': r.type ?? 'application/json; charset=utf-8', ...r.headers });
         res.end(r.text ?? JSON.stringify(r.json));
@@ -211,9 +253,9 @@ export function createApp(store: Store, persistFile: string | null = dataFile, o
       res.writeHead(200, { 'content-type': mime[extname(file)] ?? 'application/octet-stream' });
       res.end(readFileSync(file));
     } catch (e: any) {
-      const status = e instanceof HttpError ? e.status : e instanceof A.DomainError ? 422 : e instanceof SyntaxError ? 400 : 500;
+      const status = e instanceof HttpError ? e.status : e instanceof V.ValidationError ? 400 : e instanceof A.DomainError ? 422 : 500;
       res.writeHead(status, { 'content-type': 'application/json; charset=utf-8' });
-      res.end(JSON.stringify({ error: e.code ?? e.message }));
+      res.end(JSON.stringify(status === 500 ? { error: 'internal_error' } : { error: e.code ?? e.message, ...(e.field ? { field: e.field } : {}) }));
       if (status === 500) console.error(e);
     }
   });
