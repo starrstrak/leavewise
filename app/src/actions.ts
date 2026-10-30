@@ -238,7 +238,7 @@ export function rankForRequest(s: State, rr: ReplacementRequest, now: string) {
   let common: Map<string, number> | null = null as Map<string, number> | null;
   const rejected = new Map<string, string[]>();
   for (const slot of rr.slots) {
-    const { ranked, rejected: rej } = rankCandidates(slot, rr.qualification, ctx, abs, tried);
+    const { ranked, rejected: rej } = rankCandidates(slot, rr.qualification, ctx, abs, tried, rr.slots);
     for (const r of rej) rejected.set(r.employeeId, [...(rejected.get(r.employeeId) ?? []), ...r.reasons.map((x) => x.code)]);
     const m = new Map(ranked.map((c) => [c.employeeId, c.score]));
     common = common ? new Map<string, number>([...common].filter(([k]) => m.has(k)).map(([k, v]): [string, number] => [k, v + m.get(k)!])) : m;

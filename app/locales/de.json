@@ -186,7 +186,31 @@
   "weekly_hours": "Würde die Wochenhöchstarbeitszeit überschreiten: {hours} h > {max} h.",
   "rest_daily": "Tägliche Ruhezeit nicht eingehalten: {gapHours} h < {min} h.",
   "employment_inactive": "An diesem Datum nicht angestellt.",
-  "already_declined": "Bereits abgelehnt oder abgelaufen."
+  "already_declined": "Bereits abgelehnt oder abgelaufen.",
+  "weekly_rest": "Wöchentliche Ruhezeit nicht eingehalten: beste Ruhezeit {gapHours} h < {min} h.",
+  "leave_default": "Vorgeschlagene Standarddauer für «{type}»: {days} ({unit}); Antrag: {length}.",
+  "leave_to_validate": "Standardwert, von einer Juristin oder einem Juristen zu prüfen: keine Rechtsberatung, kein garantierter Anspruch ({basis}).",
+  "leave_exceeds_default": "Der Antrag ({length}) überschreitet die Standarddauer ({days}): menschliche Entscheidung erforderlich.",
+  "leave_proof_required": "Erwarteter Nachweis: {proof}.",
+  "leave_yearly_cap": "Jahressumme {total} Tage, über dem Richtwert von {max} Tagen.",
+  "min_consecutive_reminder": "Hinweis (nicht blockierend): Der längste zusammenhängende Ferienblock {year} beträgt {longest} Arbeitstag(e); empfohlen sind mindestens {min}."
+ },
+ "unit": {
+   "calendar": "Kalendertage",
+   "working": "Arbeitstage"
+ },
+ "proof": {
+   "supporting_document": "Beleg",
+   "birth_certificate": "Geburtsurkunde oder -bescheinigung",
+   "medical_certificate": "Arztzeugnis"
+ },
+ "leave": {
+   "hint": "Standarddauer: {days} {unit} · Nachweis: {proof}. Von einer Juristin oder einem Juristen zu prüfen; kein garantierter Anspruch.",
+   "title": "Sonderurlaub, Mutterschaft, Vaterschaft, Betreuung von Angehörigen: Standarddauern (juristisch zu prüfen)",
+   "days": "Tage",
+   "yearly": "Jahreshöchstwert",
+   "consec_remind": "Hinweis: mindestens {min} zusammenhängende Arbeitstage Ferien pro Jahr (längster geplanter Block: {longest}).",
+   "consec_ok": "Geplante zusammenhängende Ferien: {longest} Arbeitstage (≥ {min})."
  },
  "alt": {
   "partial": "Teilweise gewähren: vom {start} bis {end} ({halfDays} Halbtage).",

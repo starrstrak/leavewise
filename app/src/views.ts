@@ -1,4 +1,4 @@
-import { balanceOf } from './balance.js';
+import { balanceOf, consecutiveVacation } from './balance.js';
 import { makeCtx } from './coverage.js';
 import { isHr, currentRules } from './actions.js';
 import { renderAlt, renderReason, Lang } from './i18n.js';
@@ -28,5 +28,5 @@ export function balancesFor(s: State, now: string, viewer: Employee) {
   const cal = makeCtx(s, rules).cal;
   const year = Number(now.slice(0, 4));
   return s.employees.filter((e) => canSeeEmployee(viewer, e) && e.status !== 'external_temp')
-    .map((e) => ({ employeeId: e.id, name: e.name, ...balanceOf(e, year, now.slice(0, 10), s.absences, cal, rules) }));
+    .map((e) => ({ employeeId: e.id, name: e.name, ...balanceOf(e, year, now.slice(0, 10), s.absences, cal, rules), consecutive: consecutiveVacation(e, year, s.absences, cal, rules) }));
 }

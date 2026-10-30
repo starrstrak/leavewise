@@ -67,7 +67,7 @@ Entités : Employé, Qualification, Demande d'absence, Décision, Règlement (ve
 
 ## 6. Domaine, moteur, remplacements (Phases 2-4) — voir RULES.md
 Code : `app/src/` (`types`, `calendar`, `rules`, `balance`, `coverage`, `engine`, `replacement`, `actions`, `server`), données fictives `demo/seed.ts`, locales `app/locales/`.
-Écarts assumés : repos hebdomadaire (35 h) et durées légales des congés spéciaux non codés ; l'équité utilise des jours calendaires ; pas d'authentification réelle (sélecteur de rôle, H3) ; persistance JSON mono-utilisateur.
+Écarts assumés : l'équité utilise des jours calendaires ; pas d'authentification réelle (sélecteur de rôle, H3) ; persistance JSON mono-utilisateur.
 
 ## 7. Décision de nommage
 L'utilisateur a demandé de garder le nom « Leavewise », identique à celui du produit de référence. Cela déroge à la règle initiale « ne pas copier le nom » : exception décidée par l'utilisateur, consignée dans CLAUDE.md. Logo, design, textes et code restent propres. **Risque à valider** : confusion avec le produit existant et droits de marque (vérifier le registre suisse IPI avant toute mise en ligne). Le site précise qu'il s'agit d'un prototype fictif.

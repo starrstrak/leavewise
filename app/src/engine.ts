@@ -1,8 +1,9 @@
 import { addDays, diffDays } from './calendar.js';
-import { balanceOf } from './balance.js';
+import { balanceOf, consecutiveVacation } from './balance.js';
 import {
   Ctx, activeAbsences, makeCtx, minMargin, newViolations, qualifiedFor, slotsOfAbsence,
 } from './coverage.js';
+import { leaveReasons } from './leaves.js';
 import { rankCandidates } from './replacement.js';
 import { rulesAt } from './rules.js';
 import type {
@@ -44,6 +45,14 @@ export function ruleBlocks(req: Absence, emp: Employee, ctx: Ctx, accepted: Abse
     const b = balanceOf(emp, year, req.start, state.absences.filter((a) => a.id !== req.id), ctx.cal, r, [...mine, req]);
     if (b.remaining < 0 && !r.internal.allowNegativeBalance) out.push(block('balance_negative', { remaining: b.remaining }));
     else if (b.remaining < 0) out.push(warn('balance_negative_allowed', { remaining: b.remaining }));
+  }
+  const sameYear = state.absences.filter((a) => a.id !== req.id && a.employeeId === emp.id && a.type === req.type &&
+    a.status === 'approved' && a.start.slice(0, 4) === req.start.slice(0, 4));
+  out.push(...leaveReasons(req, r, ctx.cal, sameYear));
+  if (req.type === 'vacation') {
+    const year = Number(req.start.slice(0, 4));
+    const c = consecutiveVacation(emp, year, state.absences.filter((a) => a.id !== req.id), ctx.cal, r, [...accepted.filter((a) => a.employeeId === emp.id), req]);
+    if (!c.met) out.push(info('min_consecutive_reminder', { longest: c.longest, min: c.min, year }));
   }
   return out;
 }
@@ -143,7 +152,7 @@ export function alternatives(req: Absence, emp: Employee, ctx: Ctx, accepted: Ab
     const tops: string[] = [];
     let all = true;
     for (const v of viol) {
-      const { ranked } = rankCandidates(v.slot, 'pharmacist', ctx, [...base, req]);
+      const { ranked } = rankCandidates(v.slot, 'pharmacist', ctx, [...base, req], [], viol.map((x) => x.slot));
       if (!ranked.length) { all = false; break; }
       tops.push(ranked[0].employeeId);
     }

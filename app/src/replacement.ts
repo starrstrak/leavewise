@@ -20,9 +20,9 @@ export function canStandIn(e: Employee, qual: QualCode, ctx: Ctx): boolean {
 
 interface Ev { date: string; start: number; end: number }
 
-function eventsOf(e: Employee, ctx: Ctx, absences: Absence[], around: string): Ev[] {
+function eventsOf(e: Employee, ctx: Ctx, absences: Absence[], around: string, span = 2): Ev[] {
   const evs: Ev[] = [];
-  for (let d = addDays(around, -2); d <= addDays(around, 2); d = addDays(d, 1)) {
+  for (let d = addDays(around, -span); d <= addDays(around, span); d = addDays(d, 1)) {
     for (const half of ['AM', 'PM'] as Half[]) {
       const s: Slot = { date: d, half };
       const worked = (isScheduled(e, s, weekday(d)) && ctx.cal.isOpen(d, half)) ||
@@ -51,6 +51,28 @@ export function restViolation(e: Employee, slot: Slot, ctx: Ctx, absences: Absen
   return worst;
 }
 
+/**
+ * Weekly rest (LTr art. 21, value to be validated by a legal professional): in each ISO week touched by
+ * `slots`, at least one uninterrupted gap >= legal.weeklyRestHours between work events (extra blocks included).
+ * A gap counts for the week in which it starts. Returns the best gap in minutes of the first non-compliant week, else null.
+ */
+export function weeklyRestViolation(e: Employee, slots: Slot[], ctx: Ctx, absences: Absence[]): number | null {
+  const need = ctx.rules.legal.weeklyRestHours * 60;
+  for (const mon of [...new Set(slots.map((s) => mondayOf(s.date)))].sort()) {
+    const evs = eventsOf(e, ctx, absences, addDays(mon, 3), 10)
+      .concat(slots.filter((s) => mondayOf(s.date) === mon).map((s) => ({ date: s.date, ...slotMinutes(s.date, s.half, ctx.rules) })))
+      .sort((a, b) => a.start - b.start);
+    const wStart = toMin(mon), wEnd = wStart + 7 * 1440;
+    let best = 0, prevEnd = -Infinity;
+    for (const x of [...evs, { date: '', start: Infinity, end: Infinity }]) {
+      if (prevEnd >= wStart && prevEnd < wEnd) best = Math.max(best, x.start - prevEnd);
+      prevEnd = Math.max(prevEnd, x.end);
+    }
+    if (best < need) return best;
+  }
+  return null;
+}
+
 export function weekHours(e: Employee, date: string, ctx: Ctx, absences: Absence[]): number {
   let h = 0;
   const mon = mondayOf(date);
@@ -67,7 +89,7 @@ export function weekHours(e: Employee, date: string, ctx: Ctx, absences: Absence
 }
 
 export function rankCandidates(
-  slot: Slot, qual: QualCode, ctx: Ctx, absences: Absence[], excludeIds: string[] = [],
+  slot: Slot, qual: QualCode, ctx: Ctx, absences: Absence[], excludeIds: string[] = [], together: Slot[] = [slot],
 ): { ranked: Candidate[]; rejected: Rejected[] } {
   const ranked: Candidate[] = [], rejected: Rejected[] = [];
   const wd = weekday(slot.date);
@@ -88,6 +110,8 @@ export function rankCandidates(
       if (hours + add > maxH) why.push(block('weekly_hours', { hours: hours + add, max: maxH }));
       const gap = restViolation(e, slot, ctx, absences);
       if (gap !== null) why.push(block('rest_daily', { gapHours: Math.round(gap / 6) / 10, min: ctx.rules.legal.dailyRestHours }));
+      const wk = weeklyRestViolation(e, together, ctx, absences);
+      if (wk !== null) why.push(block('weekly_rest', { gapHours: Math.round(wk / 6) / 10, min: ctx.rules.legal.weeklyRestHours }));
       if (why.length === 0) {
         const reasons: Reason[] = [info('qualified')];
         let score = 40;

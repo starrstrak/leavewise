@@ -29,6 +29,9 @@ export function renderReason(lng: Lang, r: Reason) {
   const p = { ...(r.params ?? {}) } as Record<string, string | number>;
   if (p.half) p.half = halfLabel(lng, p.half);
   if (p.label) p.label = String(p.label);
+  if (p.unit) p.unit = t(lng, `unit.${p.unit}`);
+  if (p.proof) p.proof = t(lng, `proof.${p.proof}`);
+  if (p.type) p.type = t(lng, `type.${p.type}`);
   return t(lng, `reason.${r.code}`, p);
 }
 export const renderAlt = (lng: Lang, a: Alternative) => t(lng, `alt.${a.kind}`, a.params);

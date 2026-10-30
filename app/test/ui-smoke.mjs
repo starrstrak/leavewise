@@ -29,6 +29,12 @@ ok((await p.locator('main').innerText()).includes('Pharmacien présent ✓'), 'c
 await pick('emp-lea'); await tab(0);
 ok((await p.locator('main').innerText()).includes('Solde de vacances'), 'employee: balance visible');
 ok(!(await p.locator('#tabs').innerText()).includes('Journal'), 'employee: no audit tab');
+ok(/Vacances consécutives prévues : 10 jours ouvrés/.test(await p.locator('#consecutive-reminder').innerText()), 'employee: 2 semaines consécutives prévues (Léa) : pas de rappel');
+await p.selectOption('select[name=type]', 'paternity');
+ok(/À valider par un juriste/.test(await p.locator('#leave-hint').innerText()), 'employee: durée par défaut paternité marquée « à valider par un juriste »');
+
+await pick('emp-luc'); await tab(0);
+ok(/Rappel : au moins 10 jours ouvrés/.test(await p.locator('#consecutive-reminder').innerText()), 'employee: rappel des 2 semaines consécutives affiché (Luc)');
 
 await pick('emp-paul'); 
 await p.locator('#tabs button', { hasText: 'Journal' }).click(); await p.waitForTimeout(300);

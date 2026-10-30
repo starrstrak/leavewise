@@ -55,7 +55,7 @@ export function createApp(store: Store, persistFile: string | null = dataFile) {
       case 'GET /api/me': {
         const bal = balancesFor(s, now, me).find((b) => b.employeeId === me.id);
         const sp = s.sensitive.find((x) => x.employeeId === me.id);
-        return { json: { me: { id: me.id, name: me.name, role: me.role }, balance: bal, consent: sp ?? { employeeId: me.id, consent: false },
+        return { json: { me: { id: me.id, name: me.name, role: me.role }, balance: bal, leaves: A.currentRules(s, now).legal.leaves, consent: sp ?? { employeeId: me.id, consent: false },
           notifications: s.notifications.filter((n) => n.to === me.id && n.channel === 'inapp').slice(-30).reverse() } };
       }
       case 'GET /api/requests': {

@@ -186,7 +186,31 @@
   "weekly_hours": "Would exceed the weekly cap: {hours} h > {max} h.",
   "rest_daily": "Daily rest not respected: {gapHours} h < {min} h.",
   "employment_inactive": "Not employed on this date.",
-  "already_declined": "Already declined or expired."
+  "already_declined": "Already declined or expired.",
+  "weekly_rest": "Weekly rest not respected: best rest {gapHours} h < {min} h.",
+  "leave_default": "Default duration suggested for “{type}”: {days} ({unit}); request: {length}.",
+  "leave_to_validate": "Default value to be validated by a legal professional: neither legal advice nor a guaranteed right ({basis}).",
+  "leave_exceeds_default": "The request ({length}) exceeds the default duration ({days}): human decision required.",
+  "leave_proof_required": "Supporting document expected: {proof}.",
+  "leave_yearly_cap": "Yearly total {total} days, above the indicative cap of {max} days.",
+  "min_consecutive_reminder": "Reminder (non-blocking): the longest consecutive vacation in {year} is {longest} working day(s); at least {min} are recommended."
+ },
+ "unit": {
+   "calendar": "calendar days",
+   "working": "working days"
+ },
+ "proof": {
+   "supporting_document": "supporting document",
+   "birth_certificate": "birth certificate",
+   "medical_certificate": "medical certificate"
+ },
+ "leave": {
+   "hint": "Default duration: {days} {unit} · document: {proof}. To be validated by a legal professional; not a guaranteed right.",
+   "title": "Special leave, maternity, paternity, carer: default durations (to be validated by a legal professional)",
+   "days": "days",
+   "yearly": "yearly cap",
+   "consec_remind": "Reminder: at least {min} consecutive working days of vacation per year (longest planned: {longest}).",
+   "consec_ok": "Planned consecutive vacation: {longest} working days (≥ {min})."
  },
  "alt": {
   "partial": "Grant partially: from {start} to {end} ({halfDays} half-days).",

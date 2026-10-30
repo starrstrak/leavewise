@@ -8,6 +8,19 @@ export type AbsenceType =
 export type RequestStatus =
   | 'draft' | 'submitted' | 'approved' | 'refused' | 'cancelled' | 'cancel_requested';
 
+export type LeaveKind = 'special' | 'maternity' | 'paternity' | 'carer';
+/** Default duration of a leave type: a parameter to be validated by a legal professional, never a guaranteed right. */
+export interface LeaveDefault {
+  days: number;
+  unit: 'calendar' | 'working';
+  /** supporting document expected (key of the `proof` locale list), null if none */
+  proof: string | null;
+  /** yearly cap in days (information, non-blocking) */
+  yearlyMaxDays?: number;
+  /** indicative legal basis, free text, to be validated */
+  basis: string;
+}
+
 export interface Slot { date: string; half: Half }
 
 export interface Qualification {
@@ -133,6 +146,7 @@ export interface Rules {
     vacationWeeks: number; vacationWeeksUnder20: number; ageProtection: number;
     minConsecutiveDays: number; sicknessCreditsVacation: boolean;
     dailyRestHours: number; weeklyRestHours: number; maxWeeklyHours: number;
+    leaves: Record<LeaveKind, LeaveDefault>;
   };
   internal: {
     minNoticeDays: number; urgentWaivesNotice: boolean;

@@ -82,12 +82,18 @@ const act = (fn) => async (e) => { try { await fn(e); await load(); } catch (err
 async function viewMe() {
   const [info, reqs] = await Promise.all([api('/me'), api('/requests')]);
   const b = info.balance, main = $('#main');
-  const types = ['vacation', 'special', 'training', 'unpaid', 'carer', 'paternity'];
+  const types = ['vacation', 'special', 'training', 'unpaid', 'carer', 'paternity', 'maternity'];
+  const leaveHint = h('p', { class: 'muted', id: 'leave-hint', role: 'note' });
+  const showHint = (type) => {
+    const d = info.leaves?.[type];
+    leaveHint.textContent = d ? t('leave.hint', { days: d.days, unit: t('unit.' + d.unit), proof: d.proof ? t('proof.' + d.proof) : '—' }) : '';
+  };
   const form = h('form', { class: 'form', onsubmit: act(async (e) => {
     e.preventDefault(); const f = new FormData(e.target);
     await api('/requests', 'POST', { type: f.get('type'), start: f.get('start'), end: f.get('end'), startHalf: f.get('sh'), endHalf: f.get('eh'), urgent: f.get('urgent') === 'on', justification: f.get('just') || undefined });
   }) },
-    tf(t('ui.type'), h('select', { name: 'type' }, types.map((x) => h('option', { value: x }, t('type.' + x))))),
+    tf(t('ui.type'), h('select', { name: 'type', onchange: (e) => showHint(e.target.value) }, types.map((x) => h('option', { value: x }, t('type.' + x))))),
+    leaveHint,
     tf(t('ui.from'), h('input', { type: 'date', name: 'start', required: true })),
     tf(t('ui.half_start'), h('select', { name: 'sh' }, ['AM', 'PM'].map((x) => h('option', { value: x }, t('ui.' + x.toLowerCase()))))),
     tf(t('ui.to'), h('input', { type: 'date', name: 'end', required: true })),
@@ -98,7 +104,9 @@ async function viewMe() {
   main.append(
     h('div', { class: 'grid' },
       h('section', { class: 'card' }, h('h2', {}, t('ui.balance')),
-        b ? h('p', {}, `${t('ui.entitlement')} : ${b.entitlement} · ${t('ui.taken')} : ${b.taken + b.closures} · `, h('strong', {}, `${t('ui.remaining')} : ${b.remaining} ${t('ui.days')}`)) : t('ui.none')),
+        b ? h('p', {}, `${t('ui.entitlement')} : ${b.entitlement} · ${t('ui.taken')} : ${b.taken + b.closures} · `, h('strong', {}, `${t('ui.remaining')} : ${b.remaining} ${t('ui.days')}`)) : t('ui.none'),
+        b?.consecutive ? h('p', { class: b.consecutive.met ? 'muted' : 'reminder', id: 'consecutive-reminder', role: 'note' },
+          t(b.consecutive.met ? 'leave.consec_ok' : 'leave.consec_remind', b.consecutive)) : null),
       h('section', { class: 'card' }, h('h2', {}, t('ui.notifications')),
         h('ul', {}, info.notifications.slice(0, 6).map((n) => h('li', {}, `${n.ts.replace('T', ' ')} — ${t('notif.' + n.kind, n.params)}`))))),
     h('section', { class: 'card' }, h('h2', {}, t('ui.new_request')), form),
@@ -256,12 +264,16 @@ async function viewAdmin() {
       priority: { sensitiveEnabled: f.get('sens') === 'on', weights: Object.fromEntries(Object.keys(w).map((k) => [k, Number(f.get('w_' + k))])) },
       automation: { autoApproveZeroRisk: f.get('auto') === 'on' },
       internal: { ...cur.internal, minNoticeDays: Number(f.get('notice')), maxConsecutiveDays: Number(f.get('maxc')) },
+      legal: { ...cur.legal, leaves: Object.fromEntries(Object.entries(cur.legal.leaves ?? {}).map(([k, d]) => [k, { ...d, days: Number(f.get('leave_' + k)) }])) },
     });
   }) },
     tf(t('ui.rules_effective'), h('input', { type: 'date', name: 'eff', value: now.slice(0, 10), required: true })),
     Object.keys(w).map((k) => tf(`${t('ui.weights')} : ${k}`, h('input', { type: 'number', min: 0, max: 100, name: 'w_' + k, value: w[k] }))),
     tf('min notice (d)', h('input', { type: 'number', name: 'notice', value: cur.internal.minNoticeDays })),
     tf('max consecutive (d)', h('input', { type: 'number', name: 'maxc', value: cur.internal.maxConsecutiveDays })),
+    h('fieldset', {}, h('legend', {}, t('leave.title')),
+      Object.entries(cur.legal.leaves ?? {}).map(([k, d]) => tf(`${t('type.' + k)} (${t('unit.' + d.unit)}${d.yearlyMaxDays ? `, ${t('leave.yearly')} ${d.yearlyMaxDays}` : ''})`,
+        h('input', { type: 'number', min: 0, max: 365, name: 'leave_' + k, value: d.days })))),
     h('label', {}, t('ui.sensitive_enabled'), h('input', { type: 'checkbox', name: 'sens', checked: cur.priority.sensitiveEnabled })),
     h('label', {}, t('ui.auto_zero'), h('input', { type: 'checkbox', name: 'auto', checked: cur.automation.autoApproveZeroRisk })),
     h('button', { class: 'primary' }, t('ui.new_version')));

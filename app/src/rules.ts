@@ -8,6 +8,12 @@ export const defaultRules: Rules = {
     vacationWeeks: 4, vacationWeeksUnder20: 5, ageProtection: 20,
     minConsecutiveDays: 10, sicknessCreditsVacation: true,
     dailyRestHours: 11, weeklyRestHours: 35, maxWeeklyHours: 45,
+    leaves: {
+      special: { days: 3, unit: 'working', proof: 'supporting_document', basis: 'CO art. 329 al. 3 (congés usuels) / règlement interne' },
+      maternity: { days: 98, unit: 'calendar', proof: 'birth_certificate', basis: 'CO art. 329f, LAPG' },
+      paternity: { days: 14, unit: 'calendar', proof: 'birth_certificate', basis: 'CO art. 329g, LAPG' },
+      carer: { days: 3, unit: 'working', proof: 'medical_certificate', yearlyMaxDays: 10, basis: 'CO art. 329h-329i, LAPG' },
+    },
   },
   internal: {
     minNoticeDays: 14, urgentWaivesNotice: true,

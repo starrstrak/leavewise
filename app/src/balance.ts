@@ -92,3 +92,34 @@ export function balanceOf(
   const remaining = entitlement + (expired ? carryUsed : carry) - taken - closures;
   return { entitlement, carryOverUsable: usable, carryOverForfeited: forfeited, taken, closures, remaining };
 }
+
+export interface Consecutive { longest: number; min: number; met: boolean }
+
+/**
+ * Reminder (non-blocking): at least `legal.minConsecutiveDays` consecutive working days of vacation in the year
+ * (indicative CO art. 329c, to be validated). Counts approved, pending and `extra` vacation; consecutive runs are
+ * chained across weekends, public holidays and collective closures. Half-days count as whole days.
+ */
+export function consecutiveVacation(e: Employee, year: number, absences: Absence[], cal: Calendar, rules: Rules, extra: Absence[] = []): Consecutive {
+  const mine = [...absences, ...extra].filter((a) => a.employeeId === e.id && a.type === 'vacation' &&
+    (a.status === 'approved' || a.status === 'cancel_requested' || a.status === 'submitted' || extra.includes(a)) && Number(a.start.slice(0, 4)) === year);
+  const working = (d: string) => {
+    const wd = ((new Date(d + 'T00:00:00Z').getUTCDay() + 6) % 7) + 1;
+    return wd <= 5 && !cal.isHoliday(d) && !cal.isClosure(d);
+  };
+  const days = new Set<string>();
+  for (const a of mine) for (let d = a.start; d <= a.end; d = addDays(d, 1)) if (working(d)) days.add(d);
+  let longest = 0, run = 0, prev: string | null = null;
+  for (const d of [...days].sort()) {
+    let chained = false;
+    if (prev) {
+      chained = true;
+      for (let x = addDays(prev, 1); x < d; x = addDays(x, 1)) if (working(x)) { chained = false; break; }
+    }
+    run = chained ? run + 1 : 1;
+    longest = Math.max(longest, run);
+    prev = d;
+  }
+  const min = rules.legal.minConsecutiveDays;
+  return { longest, min, met: longest >= min };
+}

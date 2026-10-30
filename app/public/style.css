@@ -38,3 +38,4 @@ ul.reasons { margin: 4px 0; padding-left: 18px; } li.block { color: var(--bad); 
 .cal .ok { background: var(--ok-bg); color: var(--ok); } .cal .gap { background: var(--bad-bg); color: var(--bad); } .cal .closed { color: var(--muted); }
 .error { background: var(--bad-bg); color: var(--bad); padding: 8px 12px; border-radius: var(--radius); margin-bottom: 10px; }
 @media (max-width: 600px) { main { padding: 10px; } th, td { padding: 4px; } }
+.reminder { color: var(--warn); font-weight: 600; }

@@ -1,8 +1,8 @@
 # TESTS.md — journal de vérification
 
-Commandes : `npm test` (36 tests, Vitest) ; `node app/test/ui-smoke.mjs <url>` (UI applicative) ; `npm run test:site` (site vitrine, Playwright, serveur lancé).
-Sorties réelles conservées : `tests-logs/unit.log`, `tests-logs/ui-smoke.log`, `tests-logs/site.log`. Un ✅ = exécuté, sortie conservée, comparé à l'attendu.
-Relance complète après chaque correction (non-régression) : dernier passage 36/36 + 11/11 UI (voir logs).
+Commandes : `npm test` (50 tests, Vitest) ; `node app/test/ui-smoke.mjs <url>` (UI applicative) ; `npm run test:site` (site vitrine, Playwright, serveur lancé).
+Sorties réelles conservées dans `tests-logs/` (fichiers `stepN-*.log`, un jeu par étape ; `*.log` est ignoré par git, les journaux de l'étape en cours sont ajoutés de force au commit). Un ✅ = exécuté, sortie conservée, comparé à l'attendu.
+Relance complète après chaque correction (non-régression) : dernier passage : 50/50 unitaires, 14/14 UI (`tests-logs/step2-*.log`).
 
 ## Cas métier (cahier des charges Phase 6)
 | ID | Scénario | Attendu (justification) | Obtenu | Statut | Itér. |
@@ -47,9 +47,12 @@ Relance complète après chaque correction (non-régression) : dernier passage 3
 | T34 | API : exports réservés | ✅ | 2 (**test** — en-tête CSV sans guillemets) |
 | T35 | API : règlement modifiable par l'admin, versionné | ✅ | 1 |
 | T36 | Nul ne décide de sa propre demande | ✅ | 2 (**test** — données : lundi non couvert) |
-| UI | Parcours manager/employé/admin, DE/EN, console | ✅ 11/11 | 1 |
+| T37-T42 | Repos hebdomadaire 35 h : cas passant (61,5 h), bloqué (30 h), limite (35 h accepté, 34,5 h refusé), seuil paramétrable, raison `weekly_rest` dans le classement, créneaux vérifiés ensemble | ✅ | 2 (1 : **code** — un repos qui précède lundi comptait pour la semaine suivante ; 2 : **test** — la semaine du 1er juin 2026 contient la Fête-Dieu, d'où un repos légitime de 37,5 h ; semaine du 8 juin utilisée) |
+| T43-T47 | Congés spéciaux/maternité/paternité/proche aidant : paramètres, durée et « à valider » sans blocage, jours ouvrés, plafond annuel, bout en bout FR modifiable par version | ✅ | 1 |
+| T48-T50 | Rappel « 2 semaines consécutives » : 10 j / 9 j, enchaînement par week-end, refusées ignorées, visible au manager, non bloquant, seuil paramétrable | ✅ | 1 |
+| UI | Parcours manager/employé/admin, DE/EN, console, durée par défaut « à valider par un juriste », rappel des 2 semaines | ✅ 14/14 | 2 (**test** — Léa a déjà 10 j ouvrés en attente : le rappel est correctement « satisfait » ; assertion scindée Léa/Luc) |
 
-Contrôle de sensibilité des tests : deux mutations du code (couverture désactivée ; stagiaire qualifié) font échouer respectivement 6 et 3 tests, puis retour à 36/36 après restauration.
+Contrôle de sensibilité des tests (phase 6) : deux mutations du code (couverture désactivée ; stagiaire qualifié) font échouer respectivement 6 et 3 tests, puis retour à 36/36 après restauration.
 
 ## Site vitrine (direction A)
 Exécuté : `node site/site-tests.mjs http://localhost:3113/site/` → `tests-logs/site.log`. Itérations : 2 (1 : **test erroné**, la boucle de Tab sortait du document et testait `body`/le lien d'évitement après retour ; corrigée pour s'arrêter à la fin du cycle).
