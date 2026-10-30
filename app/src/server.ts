@@ -39,6 +39,7 @@ export function createApp(store: Store, persistFile: string | null = dataFile) {
     const s = store.state, now = store.now;
     const lng = (url.searchParams.get('lng') ?? 'fr') as Lang;
     const route = `${req.method} ${url.pathname}`;
+    if (route === 'GET /healthz') return { json: { ok: true } };
     if (route === 'GET /api/locale') return { json: locale(lng) };
     const uid = String(req.headers['x-user'] ?? '');
     if (route === 'GET /api/bootstrap') {
@@ -162,6 +163,7 @@ export function createApp(store: Store, persistFile: string | null = dataFile) {
   return createServer(async (req, res: ServerResponse) => {
     try {
       const url = new URL(req.url ?? '/', 'http://x');
+      if (url.pathname === '/healthz') { res.writeHead(200, { 'content-type': 'application/json' }); res.end('{"ok":true}'); return; }
       if (url.pathname.startsWith('/api/')) {
         let raw = ''; for await (const c of req) raw += c;
         const body = raw ? JSON.parse(raw) : {};

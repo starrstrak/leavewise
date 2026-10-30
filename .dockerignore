@@ -1,0 +1,5 @@
+node_modules
+.git
+app/data
+tests-logs
+*.log
