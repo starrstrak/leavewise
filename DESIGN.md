@@ -1,6 +1,6 @@
 # DESIGN.md — direction retenue : A « Alpin »
 
-Choix de l'utilisateur : direction A (clair, clinique, rassurant). Identité propre ; rien du site de référence n'est repris (palette, typographie, textes, structure des composants et nom sont les nôtres). Le nom « Remplacia » est **provisoire**.
+Choix de l'utilisateur : direction A (clair, clinique, rassurant). Identité propre ; rien du site de référence n'est repris (palette, typographie, textes, structure des composants sont les nôtres). **Exception : le nom « Leavewise » est conservé sur demande de l'utilisateur** (voir SPEC.md §7). Le logo (croix + sur carré turquoise) est propre.
 
 ## Tokens
 Fichier unique : `site/tokens.css` (couleurs, polices, tailles, rayons, ombres, espacements ; clair par défaut, sombre automatique via `prefers-color-scheme` ou forcé par le bouton de thème).

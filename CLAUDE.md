@@ -5,7 +5,7 @@ Cas de référence : pharmacie, ouverture lun–sam, ≥ 1 pharmacien présent o
 Produit de référence : https://leavewise.nanocorp.app — inspiration fonctionnelle uniquement.
 
 ## Règles non négociables
-- Ne rien copier du produit de référence : ni code, ni textes, ni nom, ni logo, ni design.
+- Ne rien copier du produit de référence : ni code, ni textes, ni logo, ni design. **Exception décidée par l'utilisateur : le nom « Leavewise » est conservé** (risque de marque à valider, voir SPEC.md §7).
 - Toute affirmation sur le produit de référence porte une étiquette : [OBSERVÉ], [DÉDUIT], [HYPOTHÈSE À VALIDER].
 - Décision automatique = modifiable, justifiée (règle, critère, score), tracée (auteur, horodatage). L'humain tranche.
 - Données sensibles (situation familiale, santé) : désactivées par défaut, activation explicite admin + consentement employé, jamais exposées aux collègues ni managers non autorisés, jamais utilisées pour pénaliser.

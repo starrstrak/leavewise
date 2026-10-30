@@ -43,7 +43,7 @@ H11. i18n : `locales/fr|de|en`, DE/EN marqués « à relire ».
 H12. Chiffres clés vitrine : formulations vérifiables ou marquées « exemple » (pas de « 0 litige »).
 
 ## 3. Questions
-Aucune bloquante. À confirmer : commune et type d'entreprise (H1) ; nom du produit (provisoire « Remplacia » dans l'app, à fixer avec l'identité visuelle).
+Aucune bloquante. À confirmer : commune et type d'entreprise (H1) ; nom du produit : « Leavewise », **décision de l'utilisateur** (même nom que le produit de référence — voir risque ci-dessous).
 
 ## 4. Écart de procédure à signaler
 `CLAUDE.md` citait une autre branche ; la branche de travail imposée par la session est `claude/serene-wozniak-2zgwtm` (corrigé).
@@ -68,3 +68,6 @@ Entités : Employé, Qualification, Demande d'absence, Décision, Règlement (ve
 ## 6. Domaine, moteur, remplacements (Phases 2-4) — voir RULES.md
 Code : `app/src/` (`types`, `calendar`, `rules`, `balance`, `coverage`, `engine`, `replacement`, `actions`, `server`), données fictives `demo/seed.ts`, locales `app/locales/`.
 Écarts assumés : repos hebdomadaire (35 h) et durées légales des congés spéciaux non codés ; l'équité utilise des jours calendaires ; pas d'authentification réelle (sélecteur de rôle, H3) ; persistance JSON mono-utilisateur.
+
+## 7. Décision de nommage
+L'utilisateur a demandé de garder le nom « Leavewise », identique à celui du produit de référence. Cela déroge à la règle initiale « ne pas copier le nom » : exception décidée par l'utilisateur, consignée dans CLAUDE.md. Logo, design, textes et code restent propres. **Risque à valider** : confusion avec le produit existant et droits de marque (vérifier le registre suisse IPI avant toute mise en ligne). Le site précise qu'il s'agit d'un prototype fictif.
