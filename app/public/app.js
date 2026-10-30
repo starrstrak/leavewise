@@ -22,13 +22,22 @@ const h = (tag, attrs = {}, ...kids) => {
   for (const c of kids.flat()) if (c != null) e.append(c.nodeType ? c : document.createTextNode(c));
   return e;
 };
-async function api(path, method = 'GET', body) {
+async function api(path, method = 'GET', body, retried = false) {
   const sep = path.includes('?') ? '&' : '?';
-  const r = await fetch(`/api${path}${sep}lng=${lng}`, { method, headers: { 'x-user': user, 'content-type': 'application/json' }, body: body ? JSON.stringify(body) : undefined });
+  const r = await fetch(`/api${path}${sep}lng=${lng}`, { method, credentials: 'same-origin', headers: { 'content-type': 'application/json' }, body: body ? JSON.stringify(body) : undefined });
   const ct = r.headers.get('content-type') || '';
   const data = ct.includes('json') ? await r.json() : await r.text();
+  if (r.status === 401 && !retried && ['no_session', 'invalid_session', 'session_expired'].includes(data.error)) {
+    await signIn(user); // demo: the chosen role signs in again silently
+    return api(path, method, body, true);
+  }
   if (!r.ok) throw new Error(data.error || r.status);
   return data;
+}
+/** Demo sign-in: the chosen role is the whole login; the server answers with a signed, HttpOnly cookie. */
+async function signIn(id) {
+  const r = await fetch('/api/session', { method: 'POST', credentials: 'same-origin', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ userId: id }) });
+  if (!r.ok) throw new Error((await r.json()).error || r.status);
 }
 const fail = (e) => { const box = h('div', { class: 'error', role: 'alert' }, `${t('ui.error')} : ${e.message}`); $('#main').prepend(box); };
 const isMgr = () => ['manager', 'hr', 'admin'].includes(me.role);
@@ -49,9 +58,11 @@ function applyI18n() {
 async function init() {
   const boot = await (await fetch('/api/bootstrap')).json();
   people = boot.employees; now = boot.now;
+  if (boot.session && people.some((p) => p.id === boot.session.userId)) user = boot.session.userId;
   if (!people.some((p) => p.id === user)) user = people[0].id;
+  await signIn(user);
   const sel = $('#user'); sel.replaceChildren(...people.map((p) => h('option', { value: p.id, selected: p.id === user }, p.name)));
-  sel.onchange = () => { user = sel.value; localStorage.setItem('user', user); tab = 'me'; load(); };
+  sel.onchange = async () => { user = sel.value; localStorage.setItem('user', user); tab = 'me'; try { await signIn(user); await load(); } catch (e) { fail(e); } };
   $('#lng').value = lng;
   $('#lng').onchange = (e) => { lng = e.target.value; localStorage.setItem('lng', lng); load(); };
   await load();

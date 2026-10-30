@@ -6,7 +6,7 @@ Prototype fonctionnel, **données fictives uniquement**. Gère demandes d'absenc
 ```bash
 npm install && npm run dev
 ```
-Puis ouvrir http://localhost:3000 (application) et http://localhost:3000/site/ (site vitrine). Choisir un utilisateur : Claire Morel (manager), Paul Berset (gérant/admin), Léa Brunner (employée), etc. Langues FR/DE/EN (DE/EN « à relire »).
+Puis ouvrir http://localhost:3000 (application) et http://localhost:3000/site/ (site vitrine). Choisir un utilisateur (le choix ouvre une session de démo à cookie signé, sans mot de passe ; secret local généré dans `app/data/`, jamais commité) : Claire Morel (manager), Paul Berset (gérant/admin), Léa Brunner (employée), etc. Langues FR/DE/EN (DE/EN « à relire »).
 
 ## Autres commandes
 ```bash

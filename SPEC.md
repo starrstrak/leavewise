@@ -31,7 +31,7 @@ Limite : seule la page vitrine est publique ; l'application elle-même n'est pas
 ## 2. Hypothèses par défaut (modifiables)
 H1. Organisation : pharmacie de 8 personnes, commune fictive « Fribourg-exemple » (`{{commune}}` et `{{type_entreprise}}` non fournis).
 H2. Pile : Node 22 + TypeScript, SQLite local, API Fastify, front React+Vite ; tests Vitest + Playwright. Une commande : `npm run dev`. Zéro service externe.
-H3. Auth de démo : sélecteur de rôle (employé, manager, RH, admin), pas de vrai login.
+H3. Auth de démo : choix d'un rôle (employé, manager, RH, admin) qui ouvre une **session à cookie signé** (HMAC-SHA256, HttpOnly, SameSite=Strict, 8 h ; secret local généré au premier lancement dans `app/data/session.secret`, 0600, ignoré par git). Aucun mot de passe, aucune donnée personnelle dans le jeton (identifiant fictif + expiration). Ce n'est **pas** une authentification réelle : n'importe quel visiteur peut choisir n'importe quel rôle (démo locale seulement).
 H4. Vacances : 4 semaines/an, 5 semaines < 20 ans, ≥ 2 semaines consécutives (CO 329a ss.) — **à valider par un juriste**.
 H5. Jours fériés FR : jeu par défaut paramétrable, **à valider** (varient selon commune).
 H6. Granularité : demi-journée.
@@ -67,7 +67,7 @@ Entités : Employé, Qualification, Demande d'absence, Décision, Règlement (ve
 
 ## 6. Domaine, moteur, remplacements (Phases 2-4) — voir RULES.md
 Code : `app/src/` (`types`, `calendar`, `rules`, `balance`, `coverage`, `engine`, `replacement`, `actions`, `server`), données fictives `demo/seed.ts`, locales `app/locales/`.
-Écarts assumés : l'équité utilise des jours calendaires ; pas d'authentification réelle (sélecteur de rôle, H3) ; persistance JSON mono-utilisateur.
+Écarts assumés : l'équité utilise des jours calendaires ; pas d'authentification réelle (choix de rôle de démo avec cookie signé, H3) ; persistance JSON mono-utilisateur.
 
 ## 7. Décision de nommage
 L'utilisateur a demandé de garder le nom « Leavewise », identique à celui du produit de référence. Cela déroge à la règle initiale « ne pas copier le nom » : exception décidée par l'utilisateur, consignée dans CLAUDE.md. Logo, design, textes et code restent propres. **Risque à valider** : confusion avec le produit existant et droits de marque (vérifier le registre suisse IPI avant toute mise en ligne). Le site précise qu'il s'agit d'un prototype fictif.

@@ -1,5 +1,6 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { createServer, IncomingMessage, ServerResponse } from 'node:http';
+import { randomBytes } from 'node:crypto';
 import { extname, join, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import * as A from './actions.js';
@@ -10,11 +11,13 @@ import { locale, Lang } from './i18n.js';
 import { rankForRequest } from './actions.js';
 import { balancesFor, canSeeEmployee, viewDecision } from './views.js';
 import { buildDemoState, DEMO_NOW } from '../../demo/seed.js';
+import { checkToken, cookieHeader, DEFAULT_TTL_SECONDS, loadSecret, makeToken, readCookie } from './session.js';
 import type { Half, State } from './types.js';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const dataDir = join(root, 'data');
 const dataFile = join(dataDir, 'state.json');
+const secretFile = join(dataDir, 'session.secret');
 
 export interface Store { state: State; now: string }
 
@@ -32,21 +35,41 @@ const csv = (rows: Record<string, unknown>[]) => {
   return [cols.join(','), ...rows.map((r) => cols.map((c) => esc(typeof r[c] === 'object' ? JSON.stringify(r[c]) : r[c])).join(','))].join('\n');
 };
 
-export function createApp(store: Store, persistFile: string | null = dataFile) {
+export interface AppOptions {
+  /** HMAC secret of the session cookie; random and in-memory when omitted (tests) */
+  secret?: string;
+  ttlSeconds?: number;
+  /** clock in milliseconds, injectable for expiry tests */
+  clock?: () => number;
+}
+
+export function createApp(store: Store, persistFile: string | null = dataFile, opts: AppOptions = {}) {
+  const secret = opts.secret ?? randomBytes(32).toString('hex');
+  const ttl = opts.ttlSeconds ?? DEFAULT_TTL_SECONDS;
+  const nowSec = () => Math.floor((opts.clock ?? Date.now)() / 1000);
   const save = () => { if (persistFile) { mkdirSync(dataDir, { recursive: true }); writeFileSync(persistFile, JSON.stringify(store)); } };
 
-  async function api(req: IncomingMessage, url: URL, body: any): Promise<{ status?: number; json?: unknown; text?: string; type?: string }> {
+  async function api(req: IncomingMessage, url: URL, body: any): Promise<{ status?: number; json?: unknown; text?: string; type?: string; headers?: Record<string, string> }> {
     const s = store.state, now = store.now;
     const lng = (url.searchParams.get('lng') ?? 'fr') as Lang;
     const route = `${req.method} ${url.pathname}`;
     if (route === 'GET /healthz') return { json: { ok: true } };
     if (route === 'GET /api/locale') return { json: locale(lng) };
-    const uid = String(req.headers['x-user'] ?? '');
+    const sess = checkToken(secret, readCookie(req.headers.cookie), nowSec());
     if (route === 'GET /api/bootstrap') {
-      return { json: { now, employees: s.employees.map((e) => ({ id: e.id, name: e.name, role: e.role, status: e.status, qualifications: e.qualifications })) } };
+      return { json: { now, session: sess.ok ? { userId: sess.userId } : null,
+        employees: s.employees.map((e) => ({ id: e.id, name: e.name, role: e.role, status: e.status, qualifications: e.qualifications })) } };
     }
-    const me = s.employees.find((e) => e.id === uid);
-    if (!me) throw new HttpError(401, 'unknown_user');
+    // Demo sign-in: choosing a demo role is the whole login (no password, no personal data).
+    if (route === 'POST /api/session') {
+      const who = s.employees.find((e) => e.id === body?.userId);
+      if (!who) throw new HttpError(401, 'unknown_user');
+      return { json: { userId: who.id, expiresIn: ttl }, headers: { 'set-cookie': cookieHeader(makeToken(secret, who.id, nowSec(), ttl), ttl) } };
+    }
+    if (route === 'DELETE /api/session') return { json: { ok: true }, headers: { 'set-cookie': cookieHeader('', 0) } };
+    if (!sess.ok) throw new HttpError(401, sess.code);
+    const me = s.employees.find((e) => e.id === sess.userId);
+    if (!me) throw new HttpError(401, 'invalid_session');
     const hr = A.isHr(me), mgr = me.role === 'manager' || hr;
     const need = (ok: boolean) => { if (!ok) throw new HttpError(403, 'forbidden'); };
     const seg = url.pathname.split('/').filter(Boolean); // api, x, id?, action?
@@ -165,10 +188,16 @@ export function createApp(store: Store, persistFile: string | null = dataFile) {
       const url = new URL(req.url ?? '/', 'http://x');
       if (url.pathname === '/healthz') { res.writeHead(200, { 'content-type': 'application/json' }); res.end('{"ok":true}'); return; }
       if (url.pathname.startsWith('/api/')) {
+        // CSRF: a browser cross-site request carries an Origin that differs from Host
+        const origin = req.headers.origin;
+        if (origin && req.method !== 'GET') {
+          let host = ''; try { host = new URL(origin).host; } catch { /* "null" origin */ }
+          if (host !== req.headers.host) throw new HttpError(403, 'bad_origin');
+        }
         let raw = ''; for await (const c of req) raw += c;
         const body = raw ? JSON.parse(raw) : {};
         const r = await api(req, url, body);
-        res.writeHead(r.status ?? 200, { 'content-type': r.type ?? 'application/json; charset=utf-8' });
+        res.writeHead(r.status ?? 200, { 'content-type': r.type ?? 'application/json; charset=utf-8', ...r.headers });
         res.end(r.text ?? JSON.stringify(r.json));
         return;
       }
@@ -192,7 +221,7 @@ export function createApp(store: Store, persistFile: string | null = dataFile) {
 
 if (process.argv[1]?.endsWith('server.ts')) {
   const port = Number(process.env.PORT ?? 3000);
-  createApp(loadStore()).listen(port, () => console.log(`Leavewise proto: http://localhost:${port}  (donnees fictives)`));
+  createApp(loadStore(), dataFile, { secret: loadSecret(secretFile) }).listen(port, () => console.log(`Leavewise proto: http://localhost:${port}  (donnees fictives)`));
 }
 
 export type { Half };

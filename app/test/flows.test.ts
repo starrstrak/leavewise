@@ -119,8 +119,17 @@ describe('API : droits par rôle et confidentialité', () => {
   const server = createApp(store, null);
   server.listen(0);
   const base = () => `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
+  const cookies = new Map<string, string>();
+  const login = async (user: string) => {
+    if (!cookies.has(user)) {
+      const r = await fetch(base() + '/api/session', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ userId: user }) });
+      cookies.set(user, r.ok ? r.headers.get('set-cookie')!.split(';')[0] : '');
+    }
+    return cookies.get(user)!;
+  };
   const call = async (path: string, user: string, method = 'GET', body?: unknown) => {
-    const r = await fetch(base() + path, { method, headers: { 'x-user': user, 'content-type': 'application/json' }, body: body ? JSON.stringify(body) : undefined });
+    const cookie = await login(user);
+    const r = await fetch(base() + path, { method, headers: { ...(cookie ? { cookie } : {}), 'content-type': 'application/json' }, body: body ? JSON.stringify(body) : undefined });
     return { status: r.status, body: r.headers.get('content-type')?.includes('json') ? await r.json() : await r.text() };
   };
   afterAll(() => { server.close(); });
