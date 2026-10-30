@@ -86,6 +86,15 @@ Commandes (serveur lancé) : `npm run test:a11y`, `npm run test:contrast`, `npm 
 
 Itérations : accessibilité **1** (critique : grille de couverture `role="table"` sans lignes → vraie `<table>` ; au passage `h1`, bannière dans le `header`, en-tête de colonne nommé, `role="img"` invalide sur `figure`) ; contraste **2** (1 : **script** — le lien d'évitement hors écran était mesuré sur le fond de l'en-tête, faux positif, désormais mesuré à l'état focalisé ; 2 : **code** — lien d'évitement de l'application en thème sombre `#0000ee` sur fond sombre = 1,71:1 → `color: var(--ink)`). L'assertion de `site-tests.mjs` sur `figure[role=img]` a été changée en `figure.preview[aria-labelledby=previewCap]` : le rôle ARIA invalide a été retiré, la description par `figcaption` est conservée et toujours vérifiée. Le journal `step5-a11y-run1.log` conserve la détection initiale (6 critiques) et `step5-contrast-run1/2.log` les mesures en échec, preuve que les contrôles détectent bien.
 
+## Intégration continue (étape 6)
+Fichier : `.github/workflows/ci.yml` (Node 22, `ubuntu-latest`, permissions `contents: read`, aucun secret, aucun service externe ; seules ressources téléchargées : paquets npm et Chromium de Playwright). Étapes : `npm ci` → `typecheck` → `npm test` → `site:build` puis `git diff --exit-code` sur `site/index.html` et `site/legal.html` (pages périmées = échec) → Chromium → serveur en tâche de fond (attente active, échec si le serveur s'arrête) → `test:ui` → `test:site` → `test:a11y` + `test:contrast` → arrêt du serveur et dépôt des journaux en artefact. `shell: bash` (donc `pipefail`) pour qu'un test en échec ne soit pas masqué par `| tee`. Les scripts `test:*` lisent `PORT` (défaut 3000).
+| Vérification | Résultat réel | Statut |
+|---|---|---|
+| Rejeu des mêmes commandes dans un **clone propre** du dépôt (`npm ci`, port 3010) : 68/68 unitaires, site à jour, UI 14/14, site 32/32, axe 0 violation, contraste 0 sous le seuil (`tests-logs/step6-ci-simulation.log`) | conforme | ✅ |
+| Garde « pages du site périmées » : locale modifiée sans reconstruction → `git diff --exit-code` échoue ; `pipefail` propage l'échec à travers `tee` (`tests-logs/step6-ci-negative-checks.log`) | conforme (1 itération **test** : première tentative sans clé existante, refaite) | ✅ |
+| Syntaxe YAML du workflow | chargée sans erreur | ✅ |
+| **Première exécution sur GitHub Actions** | **non vérifiée** : aucun push possible depuis cet environnement (pas d'identifiants GitHub) ; le rejeu local n'utilise ni `ubuntu-latest`, ni `playwright install --with-deps`, ni `actions/*` | ⛔ non vérifié |
+
 ## Non couvert (aucun ✅ revendiqué)
 - Firefox : voir ci-dessus. Pas d'audit avec lecteur d'écran réel (VoiceOver, NVDA) ; axe-core ne couvre qu'une partie des critères WCAG, un audit manuel reste nécessaire.
 - Temps de chargement mesuré en local, pas sur réseau réel.

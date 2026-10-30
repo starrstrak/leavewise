@@ -1,0 +1,6 @@
+== garde site périmé : locale modifiée sans reconstruction commitée
+clé modifiée : meta.title
+garde déclenchée (exit non nul) : OK
+?? server.pid
+== pipefail via tee
+exit=1 (attendu 1)

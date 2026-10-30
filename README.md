@@ -15,6 +15,9 @@ npm test            # 36 tests métier et API
 npm run typecheck
 npm run site:build  # régénère site/index.html depuis les gabarits et locales/fr.json
 npm run test:site   # tests du site (serveur lancé)
+npm run test:ui     # parcours de l'interface (serveur lancé)
+npm run test:a11y   # axe-core sur le site et l'application (serveur lancé)
+npm run test:contrast # contraste mesuré sur le rendu réel (serveur lancé)
 ```
 Réinitialiser la démo : bouton « Réinitialiser la démo » (admin) ou supprimer `app/data/`.
 
