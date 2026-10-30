@@ -1,0 +1,5 @@
+
+> leavewise-proto@0.1.0 dev
+> tsx app/src/server.ts
+
+Leavewise proto: http://localhost:3921  (donnees fictives)
