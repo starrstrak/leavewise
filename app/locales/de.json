@@ -97,7 +97,8 @@
   "changes": "Was sich ändert",
   "none": "—",
   "forbidden": "Zugriff für diese Rolle verweigert",
-  "error": "Fehler"
+  "error": "Fehler",
+  "skip": "Zum Inhalt"
  },
  "role": {
   "employee": "Mitarbeitende",

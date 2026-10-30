@@ -129,6 +129,7 @@ export function validateDecisions(s: State, ids: string[], actor: string, now: s
     const d = s.decisions.find((x) => x.id === id);
     const a = d && s.absences.find((x) => x.id === d.requestId);
     if (!d || !a || d.status !== 'proposed' || (a.status as string) !== 'submitted') { skipped.push({ id, code: 'not_pending' }); continue; }
+    if (a.employeeId === actor) { skipped.push({ id, code: 'self_decision_forbidden' }); continue; }
     if (d.outcome === 'impossible') { skipped.push({ id, code: 'impossible_needs_override' }); continue; }
     setStatus(a, 'approved', actor, now);
     d.status = 'validated'; d.author = actor; d.ts = now;
@@ -163,6 +164,7 @@ export function overrideDecision(s: State, inp: OverrideInput, now: string, prev
   const a = target.absences.find((x) => x.id === inp.requestId);
   if (!a) throw new DomainError('unknown_request');
   if (a.status !== 'submitted') throw new DomainError('bad_transition');
+  if (a.employeeId === inp.actor) throw new DomainError('self_decision_forbidden');
   const others = (st: State) => st.absences.filter((x) => x.status === 'submitted' && x.id !== inp.requestId);
   const before = propose(s, { now });
   const d = target.decisions.find((x) => x.requestId === a.id && x.status === 'proposed');

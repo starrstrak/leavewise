@@ -7,7 +7,18 @@ export function locale(lng: Lang) {
   if (!cache.has(lng)) cache.set(lng, JSON.parse(readFileSync(new URL(`../locales/${lng}.json`, import.meta.url), 'utf8')));
   return cache.get(lng);
 }
-const lookup = (obj: any, path: string): string | undefined => path.split('.').reduce((o, k) => (o ? o[k] : undefined), obj);
+/** Resolve "a.b.c"; also supports flat dotted keys such as audit["request.submitted"]. */
+const lookup = (obj: any, path: string): string | undefined => {
+  if (obj == null) return undefined;
+  if (typeof obj !== 'object') return path ? undefined : obj;
+  if (path in obj) return obj[path];
+  const parts = path.split('.');
+  for (let i = 1; i < parts.length; i++) {
+    const head = parts.slice(0, i).join('.');
+    if (head in obj) { const r = lookup(obj[head], parts.slice(i).join('.')); if (r !== undefined) return r; }
+  }
+  return undefined;
+};
 const fill = (tpl: string, p: Record<string, string | number> = {}) => tpl.replace(/\{(\w+)\}/g, (_, k) => String(p[k] ?? `{${k}}`));
 
 export function t(lng: Lang, key: string, params?: Record<string, string | number>) {

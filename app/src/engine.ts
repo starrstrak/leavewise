@@ -222,8 +222,10 @@ export function propose(state: State, opts: ProposeOptions): Decision[] {
       } else accepted.push(req);
     }
     if (tieIds.has(req.id)) finalReasons.push(info('tie_broken', { rule: 'filing_order' }));
+    const seen = new Set<string>();
+    const uniq = finalReasons.filter((r) => { const k = r.code + JSON.stringify(r.params); return seen.has(k) ? false : (seen.add(k), true); });
     decisions.push({
-      id: '', requestId: req.id, outcome, status: 'proposed', reasons: finalReasons,
+      id: '', requestId: req.id, outcome, status: 'proposed', reasons: uniq,
       score: it.score, alternatives: alts, risk, tie: tieIds.has(req.id), author: 'system', ts: opts.now,
     });
   }

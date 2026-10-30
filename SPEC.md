@@ -1,6 +1,6 @@
 # SPEC.md — Phase 0 (cadrage) + amorce Phase 1
 
-Statut : **cadrage validé en attente d'accord utilisateur**. Aucun code avant validation du plan (§5).
+Statut : plan validé par l'utilisateur (« fais tout le nécessaire »). Phases 0-6 (hors site) réalisées ; phase 5b en attente du choix visuel.
 Sources lues le 2026-10-30 : page EN `/` et page FR `/fr` du produit de référence (texte via fetch, rendu visuel via Chromium/Playwright, capture 1280 px).
 Limite : seule la page vitrine est publique ; l'application elle-même n'est pas accessible. Tout ce qui touche au fonctionnement interne reste [DÉDUIT] ou [HYPOTHÈSE À VALIDER].
 
@@ -42,17 +42,29 @@ H10. Tarifs vitrine : valeurs marquées « exemple », en CHF.
 H11. i18n : `locales/fr|de|en`, DE/EN marqués « à relire ».
 H12. Chiffres clés vitrine : formulations vérifiables ou marquées « exemple » (pas de « 0 litige »).
 
-## 3. Questions bloquantes
-Aucune bloquante. À confirmer (défaut appliqué sinon) : Q1 commune/type d'entreprise (H1) ; Q2 pile (H2).
+## 3. Questions
+Aucune bloquante. À confirmer : commune et type d'entreprise (H1) ; nom du produit (provisoire « Remplacia » dans l'app, à fixer avec l'identité visuelle).
 
 ## 4. Écart de procédure à signaler
 `CLAUDE.md` citait une autre branche ; la branche de travail imposée par la session est `claude/serene-wozniak-2zgwtm` (corrigé).
 
-## 5. Plan proposé (à valider avant tout code)
-- P1 Reverse engineering : approfondir §1 (états, soldes, rapports, tarification) — doc seule.
-- P2 Modèle de domaine + RULES.md (schéma SQLite, règles JSON paramétrables, cadre légal « à valider »).
-- P3 Moteur de tri : paquet TS pur (filtres durs → score → conflits → décision → recalcul), tests unitaires d'abord.
-- P4 Remplacements (planifiés/imprévus, classement, escalade, plan B, limites par statut).
-- P5 App + démo (8 personnes, 3 mois d'historique) ; commandes remplies dans CLAUDE.md.
-- P5b Site vitrine : **2 directions visuelles** proposées d'abord (palette + typo), attente de ton choix.
-- P6 Tests : 25 cas métier + cas site ; TESTS.md avec sortie réelle, ≤ 3 itérations.
+## 5. Reverse engineering → ce que nous reconstruisons (Phase 1)
+| Élément du produit de référence | Étiquette | Notre implémentation |
+|---|---|---|
+| Portail libre-service (déposer, suivre, annuler, solde) | [OBSERVÉ] | onglet « Mes demandes » |
+| File d'approbation manager, un clic, couverture/solde/historique visibles | [OBSERVÉ] | onglet « Tri » + décision justifiée, lot, aperçu des impacts |
+| Détection de conflits | [OBSERVÉ] (plan d'entrée) | simulation de couverture par demi-journée |
+| Soldes mis à jour à l'approbation | [OBSERVÉ] | solde dérivé des demandes approuvées (jamais stocké) |
+| Notification employé à l'approbation/refus ; e-mail | [OBSERVÉ] | notifications in-app + e-mail simulé, **après** validation |
+| Exports d'audit, soldes, justificatifs | [OBSERVÉ] (Pro) | CSV audit/soldes/demandes (RH/admin) |
+| Calendrier d'équipe | [OBSERVÉ] (mini-maquette) | grille de couverture 4 semaines |
+| Tarification 2 paliers ≤ 25 salariés / illimité | [OBSERVÉ] | site vitrine : paliers « exemple » en CHF |
+| États brouillon/annulation demandée, délégation, multi-managers, rôle admin séparé | [HYPOTHÈSE À VALIDER] | implémentés selon H7 |
+| Tri automatique, remplacements, qualifications, droit suisse | absents de la vitrine | **ajouts propres au brief** |
+
+États d'une demande : brouillon → soumise → approuvée | refusée | annulée ; approuvée → annulation demandée → annulée | approuvée.
+Entités : Employé, Qualification, Demande d'absence, Décision, Règlement (versions), Besoin de remplacement (offres), Affectation, Créneau fermé (plan B), Notification, Entrée d'audit, Profil sensible (consentement), Historique de pointe.
+
+## 6. Domaine, moteur, remplacements (Phases 2-4) — voir RULES.md
+Code : `app/src/` (`types`, `calendar`, `rules`, `balance`, `coverage`, `engine`, `replacement`, `actions`, `server`), données fictives `demo/seed.ts`, locales `app/locales/`.
+Écarts assumés : repos hebdomadaire (35 h) et durées légales des congés spéciaux non codés ; l'équité utilise des jours calendaires ; pas d'authentification réelle (sélecteur de rôle, H3) ; persistance JSON mono-utilisateur.

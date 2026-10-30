@@ -97,7 +97,8 @@
   "changes": "What changes",
   "none": "—",
   "forbidden": "Access denied for this role",
-  "error": "Error"
+  "error": "Error",
+  "skip": "Skip to content"
  },
  "role": {
   "employee": "Employee",

@@ -20,9 +20,11 @@ Produit de référence : https://leavewise.nanocorp.app — inspiration fonction
 ## Structure cible
 README.md · SPEC.md · RULES.md · DESIGN.md · TESTS.md · app/ · site/ · demo/ (données + script)
 
-## Commandes (à compléter en Phase 5)
-- Lancer : `TBD`
-- Tests : `TBD`
+## Commandes
+- Installer : `npm install`
+- Lancer : `npm run dev` puis http://localhost:3000 (données fictives, état dans `app/data/`)
+- Démo scriptée : `npm run demo`
+- Tests : `npm test` ; UI : `node app/test/ui-smoke.mjs http://localhost:3000` (serveur lancé) ; types : `npm run typecheck`
 
 ## Workflow
 - Branche : `claude/serene-wozniak-2zgwtm`. Un commit par fin de phase. Pas de PR sans demande.

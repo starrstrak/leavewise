@@ -103,6 +103,17 @@ describe('Tri par lot, ajustement humain, cascade', () => {
   });
 });
 
+describe('Séparation des rôles', () => {
+  it('T36 nul ne décide de sa propre demande (validation ou forçage)', () => {
+    const s = fresh();
+    const r = req(s, 'emp-claire', '2026-09-10', '2026-09-10'); // jeudi : Luc couvre
+    runTriage(s, NOW);
+    expect(validateDecisions(s, [s.decisions[0].id], 'emp-claire', NOW).skipped[0].code).toBe('self_decision_forbidden');
+    expect(() => overrideDecision(s, { requestId: r.id, action: 'approve', reason: 'x', actor: 'emp-claire' }, NOW)).toThrow(/self_decision_forbidden/);
+    expect(validateDecisions(s, [s.decisions[0].id], 'emp-paul', NOW).done.length).toBe(1); // son manager (gérant) peut
+  });
+});
+
 describe('API : droits par rôle et confidentialité', () => {
   const store = { state: buildDemoState(), now: DEMO_NOW };
   const server = createApp(store, null);
