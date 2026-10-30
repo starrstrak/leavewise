@@ -25,6 +25,6 @@ README.md · SPEC.md · RULES.md · DESIGN.md · TESTS.md · app/ · site/ · de
 - Tests : `TBD`
 
 ## Workflow
-- Branche : `claude/eloquent-mendel-omcdya`. Un commit par fin de phase. Pas de PR sans demande.
+- Branche : `claude/serene-wozniak-2zgwtm`. Un commit par fin de phase. Pas de PR sans demande.
 - Plan présenté et validé avant tout code. Choix visuel (2 directions) validé avant le site.
 - Fin de phase : résumé ≤ 5 lignes (décisions, hypothèses ouvertes, phase suivante) + auto-vérification.
