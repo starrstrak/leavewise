@@ -1,0 +1,85 @@
+name: CI
+
+on:
+  push:
+    branches: ['claude/**']
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        shell: bash # bash -eo pipefail: a failing test is not hidden by `| tee`
+    env:
+      PORT: '3000'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Unit and API tests
+        run: npm test
+
+      - name: Build the site and check that the generated pages are up to date
+        run: |
+          npm run site:build
+          git diff --exit-code -- site/index.html site/legal.html || {
+            echo "::error::site/index.html or site/legal.html is stale: run 'npm run site:build' and commit the result"
+            exit 1
+          }
+
+      - name: Install Chromium for Playwright
+        run: npx playwright install --with-deps chromium
+
+      - name: Start the server in the background
+        run: |
+          mkdir -p tests-logs
+          nohup npm run dev > tests-logs/server.log 2>&1 &
+          echo $! > server.pid
+          for i in $(seq 1 30); do
+            if curl -fsS "http://localhost:${PORT}/api/bootstrap" > /dev/null; then echo "server ready after ${i}s"; exit 0; fi
+            kill -0 "$(cat server.pid)" 2>/dev/null || { echo "::error::server exited early"; cat tests-logs/server.log; exit 1; }
+            sleep 1
+          done
+          echo "::error::server did not answer within 30 s"; cat tests-logs/server.log; exit 1
+
+      - name: UI smoke test
+        run: npm run test:ui | tee tests-logs/ui-smoke.log
+
+      - name: Site tests (Chromium)
+        run: npm run test:site | tee tests-logs/site.log
+
+      - name: Accessibility (axe-core) and rendered contrast
+        run: |
+          npm run test:a11y | tee tests-logs/a11y.log
+          npm run test:contrast | tee tests-logs/contrast.log
+
+      - name: Stop the server
+        if: always()
+        run: '[ -f server.pid ] && kill "$(cat server.pid)" || true'
+
+      - name: Keep the logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tests-logs
+          path: tests-logs/
+          if-no-files-found: ignore
