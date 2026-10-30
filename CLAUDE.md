@@ -18,15 +18,16 @@ Produit de référence : https://leavewise.nanocorp.app — inspiration fonction
 - Code : identifiants en anglais, commentaires rares, en français ou anglais selon le fichier voisin.
 
 ## Structure cible
-README.md · SPEC.md · RULES.md · DESIGN.md · TESTS.md · app/ · site/ · demo/ (données + script)
+README.md · SPEC.md · RULES.md · DESIGN.md · TESTS.md · app/ · site/ · demo/ (données + script) · .github/workflows/ · tests-logs/ (sorties réelles, ajoutées de force : `*.log` est ignoré)
 
 ## Commandes
 - Installer : `npm install`
 - Lancer : `npm run dev` puis http://localhost:3000 (données fictives, état dans `app/data/`)
 - Démo scriptée : `npm run demo`
-- Tests : `npm test` ; UI : `node app/test/ui-smoke.mjs http://localhost:3000` (serveur lancé) ; types : `npm run typecheck` ; site : `npm run site:build` puis `npm run test:site` (serveur lancé, http://localhost:3000/site/)
+- Tests : `npm test` ; types : `npm run typecheck` ; avec serveur lancé (`PORT` respecté) : `npm run test:ui`, `npm run test:site` (après `npm run site:build`), `npm run test:a11y`, `npm run test:contrast` ; navigateurs : `npx playwright install chromium`
+- CI : `.github/workflows/ci.yml` (Node 22). Session de démo à cookie signé, secret dans `app/data/session.secret` (jamais commité).
 
 ## Workflow
-- Branche : `claude/serene-wozniak-2zgwtm`. Un commit par fin de phase. Pas de PR sans demande.
+- Branche : `claude/serene-wozniak-2zgwtm`. Un commit par fin de phase ou d'étape. Pas de PR, de merge ni de force-push sans demande.
 - Plan présenté et validé avant tout code. Choix visuel (2 directions) validé avant le site.
 - Fin de phase : résumé ≤ 5 lignes (décisions, hypothèses ouvertes, phase suivante) + auto-vérification.

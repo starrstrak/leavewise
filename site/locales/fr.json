@@ -34,7 +34,7 @@
  "mock.days": "L,M,M,J,V,S",
  "preview.caption": "Maquette illustrative de la vue manager : trois demandes en attente, boutons Approuver et Refuser, et un mini-calendrier d'équipe avec la couverture « pharmacien présent ».",
  "stats.note": "Chiffres du prototype, pas des résultats de clients.",
- "stats.1.v": "36",
+ "stats.1.v": "68",
  "stats.1.l": "tests automatisés dans le dépôt du prototype",
  "stats.2.v": "3",
  "stats.2.l": "langues prévues : français, allemand, anglais",

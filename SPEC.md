@@ -1,6 +1,6 @@
 # SPEC.md — Phase 0 (cadrage) + amorce Phase 1
 
-Statut : plan validé par l'utilisateur (« fais tout le nécessaire »). Phases 0-6 (hors site) réalisées ; phase 5b en attente du choix visuel.
+Statut : plan validé par l'utilisateur (« fais tout le nécessaire »). Phases 0-6 et étapes techniques 1-7 réalisées (site vitrine, règles légales complétées, session signée, API durcie, accessibilité, CI). Chiffres réels dans TESTS.md.
 Sources lues le 2026-10-30 : page EN `/` et page FR `/fr` du produit de référence (texte via fetch, rendu visuel via Chromium/Playwright, capture 1280 px).
 Limite : seule la page vitrine est publique ; l'application elle-même n'est pas accessible. Tout ce qui touche au fonctionnement interne reste [DÉDUIT] ou [HYPOTHÈSE À VALIDER].
 
@@ -30,7 +30,7 @@ Limite : seule la page vitrine est publique ; l'application elle-même n'est pas
 
 ## 2. Hypothèses par défaut (modifiables)
 H1. Organisation : pharmacie de 8 personnes, commune fictive « Fribourg-exemple » (`{{commune}}` et `{{type_entreprise}}` non fournis).
-H2. Pile : Node 22 + TypeScript, SQLite local, API Fastify, front React+Vite ; tests Vitest + Playwright. Une commande : `npm run dev`. Zéro service externe.
+H2. Pile **réelle** (révisée : le plan initial prévoyait SQLite, Fastify et React+Vite, jamais utilisés) : Node 22 + TypeScript (`tsx`), serveur `node:http` sans framework, état en fichier JSON (écriture atomique), interface en JavaScript natif sans build, locales JSON ; tests Vitest, Playwright, axe-core. Une commande : `npm run dev`. Zéro service externe, aucune dépendance d'exécution (uniquement des dépendances de développement).
 H3. Auth de démo : choix d'un rôle (employé, manager, RH, admin) qui ouvre une **session à cookie signé** (HMAC-SHA256, HttpOnly, SameSite=Strict, 8 h ; secret local généré au premier lancement dans `app/data/session.secret`, 0600, ignoré par git). Aucun mot de passe, aucune donnée personnelle dans le jeton (identifiant fictif + expiration). Ce n'est **pas** une authentification réelle : n'importe quel visiteur peut choisir n'importe quel rôle (démo locale seulement).
 H4. Vacances : 4 semaines/an, 5 semaines < 20 ans, ≥ 2 semaines consécutives (CO 329a ss.) — **à valider par un juriste**.
 H5. Jours fériés FR : jeu par défaut paramétrable, **à valider** (varient selon commune).
@@ -66,7 +66,7 @@ Aucune bloquante. À confirmer : commune et type d'entreprise (H1) ; nom du prod
 Entités : Employé, Qualification, Demande d'absence, Décision, Règlement (versions), Besoin de remplacement (offres), Affectation, Créneau fermé (plan B), Notification, Entrée d'audit, Profil sensible (consentement), Historique de pointe.
 
 ## 6. Domaine, moteur, remplacements (Phases 2-4) — voir RULES.md
-Code : `app/src/` (`types`, `calendar`, `rules`, `balance`, `coverage`, `engine`, `replacement`, `actions`, `server`), données fictives `demo/seed.ts`, locales `app/locales/`.
+Code : `app/src/` (`types`, `calendar`, `rules`, `balance`, `coverage`, `engine`, `replacement`, `leaves`, `actions`, `session`, `validate`, `views`, `i18n`, `server`), données fictives `demo/seed.ts`, locales `app/locales/`.
 Écarts assumés : l'équité utilise des jours calendaires ; pas d'authentification réelle (choix de rôle de démo avec cookie signé, H3) ; persistance JSON mono-utilisateur.
 
 ## 6b. Robustesse de l'API (étape 4)
@@ -74,3 +74,14 @@ Validation sans dépendance (`app/src/validate.ts`) : dates réelles `AAAA-MM-JJ
 
 ## 7. Décision de nommage
 L'utilisateur a demandé de garder le nom « Leavewise », identique à celui du produit de référence. Cela déroge à la règle initiale « ne pas copier le nom » : exception décidée par l'utilisateur, consignée dans CLAUDE.md. Logo, design, textes et code restent propres. **Risque à valider** : confusion avec le produit existant et droits de marque (vérifier le registre suisse IPI avant toute mise en ligne). Le site précise qu'il s'agit d'un prototype fictif.
+
+## 8. Reste à faire par un humain
+Rien de ce qui suit n'a été fait ni ne peut l'être par le prototype ; chaque point conditionne toute mise en service.
+1. **Validation juridique** de tous les paramètres de RULES.md (vacances, repos quotidien/hebdomadaire, durées de maternité, paternité, proche aidant et congés spéciaux, jours fériés par commune, durées maximales, conservation nLPD 12 mois, formulation du consentement). Rien n'est un avis juridique.
+2. **Relecture DE/EN** par des locuteurs : `app/locales/de|en.json` et `site/locales/de|en.json` sont des traductions non relues (marquées « à relire »).
+3. **Marque « Leavewise »** : vérifier la disponibilité et le risque de confusion avec le produit de référence au registre IPI (et, au besoin, international) avant toute mise en ligne ; décision d'exception consignée dans CLAUDE.md.
+4. **Choix d'hébergement** (pays, fournisseur, sauvegardes, journalisation) : rien n'est hébergé ; aucune proposition n'a été faite. Le serveur de démo ne doit pas être exposé.
+5. **Vraie authentification** : la session de démo ne contrôle pas l'identité (n'importe quel visiteur choisit son rôle). À remplacer (SSO ou mots de passe robustes, 2FA, gestion de comptes, réinitialisation, `Secure` sur le cookie, protection CSRF complète, limitation de débit), puis tests d'intrusion.
+6. **Remplacement des données fictives** (équipe, historique, jours fériés, règlement interne) par les données réelles, avec registre de traitement, base légale et information des employés (nLPD) ; remplacer le stockage JSON mono-utilisateur par une base fiable avec sauvegarde.
+7. **Vérifications non faites ici** : première exécution de la CI sur GitHub Actions ; Firefox (non exécutable dans l'environnement de développement) ; audit manuel d'accessibilité avec lecteur d'écran ; performances sur réseau réel ; revue de la PR par un humain.
+8. **Vulnérabilités signalées par `npm audit`** (vitest, esbuild, tinypool : outils de développement) : à traiter lors d'une montée de version majeure, non automatisée ici.

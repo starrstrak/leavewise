@@ -1,8 +1,21 @@
 # TESTS.md — journal de vérification
 
-Commandes : `npm test` (68 tests, Vitest) ; `node app/test/ui-smoke.mjs <url>` (UI applicative) ; `npm run test:site` (site vitrine, Playwright, serveur lancé).
-Sorties réelles conservées dans `tests-logs/` (fichiers `stepN-*.log`, un jeu par étape ; `*.log` est ignoré par git, les journaux de l'étape en cours sont ajoutés de force au commit). Un ✅ = exécuté, sortie conservée, comparé à l'attendu.
-Relance complète après chaque correction (non-régression) : dernier passage : 68/68 unitaires, 14/14 UI, site OK (`tests-logs/step4-*.log`).
+Sorties réelles conservées dans `tests-logs/` (un jeu `stepN-*.log` par étape ; `*.log` est ignoré par git, les journaux sont ajoutés de force aux commits). Un ✅ = exécuté, sortie conservée, comparé à l'attendu. Non-régression : la suite complète est relancée après chaque étape.
+
+## Bilan réel (dernier passage : `tests-logs/step7-*.log`)
+| Suite | Commande | Résultat |
+|---|---|---|
+| Unitaires, règles, API, sessions | `npm test` | **68/68** : `domain` 25, `flows` 11, `legal-rules` 14, `session` 8, `api-robustness` 10 |
+| Types | `npm run typecheck` | 0 erreur |
+| UI applicative | `npm run test:ui` | **14/14** |
+| Site vitrine | `npm run test:site:chromium` / `:webkit` | **32/32** et **32/32** ; Firefox ⛔ non exécutable |
+| Accessibilité (axe-core) | `npm run test:a11y` | 39 pages/états, **0 violation** |
+| Contraste sur rendu réel | `npm run test:contrast` | 41 rendus, minimum **4,97:1**, 0 sous le seuil |
+| CI | `.github/workflows/ci.yml` | rejouée en clone propre ✅ ; **exécution GitHub non vérifiée** |
+
+Itérations par étape (max. 3 autorisées, jamais atteintes sauf Firefox) : étape 1 : 1 (échec réel avant toute modification : Playwright non déclaré) ; étape 2 : 2 ; étape 3 : 1 ; étape 4 : 1 ; étape 5 : 1 (accessibilité), 2 (contraste), **3 (Firefox, escaladé)** ; étape 6 : 1.
+Écart de décompte à signaler : le brief de reprise annonçait 33 tests pour le site ; le journal du site compte **32** lignes `PASS` (aucune `FAIL`), y compris sur le dépôt avant mes modifications (`tests-logs/step1b-site.log`). Je n'ai pas pu expliquer les 33 ; seuls les 32 mesurés sont revendiqués.
+Limites connues : voir « Non couvert » en fin de fichier.
 
 ## Cas métier (cahier des charges Phase 6)
 | ID | Scénario | Attendu (justification) | Obtenu | Statut | Itér. |

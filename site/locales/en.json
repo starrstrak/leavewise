@@ -34,7 +34,7 @@
  "mock.days": "M,T,W,T,F,S",
  "preview.caption": "Illustrative mock-up of the manager view: three pending requests, Approve and Refuse buttons, and a mini team calendar showing the \"pharmacist present\" coverage.",
  "stats.note": "Prototype figures, not customer results.",
- "stats.1.v": "36",
+ "stats.1.v": "68",
  "stats.1.l": "automated tests in the prototype repository",
  "stats.2.v": "3",
  "stats.2.l": "planned languages: French, German, English",

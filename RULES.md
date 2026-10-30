@@ -4,6 +4,8 @@ Tout est paramétrable sans code : `app/src/rules.ts` (valeurs par défaut) et o
 
 > **Valeurs légales : « à valider par un juriste ».** Elles ne constituent pas un avis juridique.
 
+Un nouveau règlement envoyé à l'API est validé : champs connus seulement, nombres entre 0 et 100 000 (seul `easter` des jours fériés peut être négatif), date d'entrée en vigueur réelle, poids de priorité non tous nuls ; sinon erreur 400 explicite et aucune version créée.
+
 ## Cadre légal (paramètres par défaut, à valider)
 | Paramètre | Défaut | Base indicative (à valider) |
 |---|---|---|
