@@ -134,3 +134,15 @@ h2 { font-size: var(--fs-3); font-weight: 800; max-width: 22ch; }
 .legal main { padding-top: 96px; padding-bottom: var(--s-8); }
 .legal h1 { font-size: var(--fs-3); margin-bottom: var(--s-5); } .legal section { margin-bottom: var(--s-5); } .legal h2 { font-size: var(--fs-2); max-width: none; margin-bottom: var(--s-2); }
 .legal :target h2 { color: var(--c-accent); }
+
+/* sectors */
+.lead { max-width: 62ch; margin-top: var(--s-4); color: var(--c-muted); font-size: var(--fs-1); }
+.adapt { display: grid; gap: var(--s-4); margin-top: var(--s-6); align-items: start; }
+@media (min-width: 960px) { .adapt { grid-template-columns: 1.6fr 1fr; } }
+.sectors { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s-4); grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+.sectors .card { align-content: start; justify-items: start; }
+.sectors .card h3 { font-size: var(--fs-1); }
+.params { background: var(--c-deep); color: var(--c-deep-ink); border-color: var(--c-deep); }
+.params h3 { font-size: var(--fs-2); }
+.params .ticks li::before { border-color: var(--c-badge); }
+.params .fine { color: var(--c-deep-ink); opacity: .85; }

@@ -24,7 +24,17 @@ for (const [name, pal] of [['clair', light], ['sombre', dark]]) {
   ok(bad.length === 0, `contrastes AA (${name}) : min ${Math.min(...pairs.map(([f, b]) => ratio(pal[f], pal[b]))).toFixed(2)}${bad.length ? ' KO: ' + bad.map((x) => `${x[0]}/${x[1]}=${x[2].toFixed(2)}`).join(',') : ''}`);
 }
 
-const browser = await chromium.launch();
+/* ---- site générique : pas de vocabulaire d'un seul secteur hors des exemples ---- */
+{
+  const allowed = /^(adapt\.|sec\d\.|params\.|hero\.note$|q7\.|legal\.)/;
+  const sector = /pharmac|apothek/i;
+  const leaks = [];
+  for (const l of ['fr', 'de', 'en']) for (const [k, v] of Object.entries(locales[l])) if (k !== '_meta' && !allowed.test(k) && sector.test(v)) leaks.push(`${l}:${k}`);
+  ok(leaks.length === 0, `site générique : aucun terme propre à un secteur hors des exemples (${leaks.length ? leaks : 'aucune fuite'})`);
+  ok(['sec1', 'sec2', 'sec3', 'sec4', 'sec5'].every((k) => ['fr', 'de', 'en'].every((l) => locales[l][k + '.t'] && locales[l][k + '.d'])) && Object.keys(locales.fr).filter((k) => /^params\.\d/.test(k)).length === 8, 'section secteurs : 5 exemples et 8 paramètres présents dans les 3 langues');
+}
+
+const browser = await chromium.launch(process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH } : {});
 const errors = [], failedReqs = [];
 const newPage = async (w, h) => {
   const ctx = await browser.newContext({ viewport: { width: w, height: h } });
@@ -37,7 +47,7 @@ const newPage = async (w, h) => {
 };
 
 /* ---- responsive ---- */
-for (const [name, w, h] of [['mobile', 375, 800], ['tablette', 768, 1024], ['bureau', 1280, 800]]) {
+for (const [name, w, h] of [['mobile', 375, 800], ['tablette', 768, 1024], ['petit bureau', 960, 700], ['bureau', 1280, 800]]) {
   const p = await newPage(w, h);
   await p.goto(base, { waitUntil: 'networkidle' });
   const m = await p.evaluate(() => ({ sw: document.documentElement.scrollWidth, cw: document.documentElement.clientWidth, h1: !!document.querySelector('h1')?.offsetHeight, menu: getComputedStyle(document.getElementById('menuBtn')).display, navVisible: document.querySelector('#nav > a').offsetHeight > 0, cards: [...document.querySelectorAll('.card')].every((c) => c.getBoundingClientRect().right <= innerWidth + 1) }));

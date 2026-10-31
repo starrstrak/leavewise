@@ -6,7 +6,7 @@ const { chromium } = createRequire(import.meta.url)('playwright');
 const base = (process.argv[2] ?? 'http://localhost:3000').replace(/\/$/, '');
 let failed = 0, pages = 0;
 
-const browser = await chromium.launch();
+const browser = await chromium.launch(process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH } : {});
 const decoder = await (await browser.newContext()).newPage();
 
 async function measure(page, label, only = null) {
@@ -28,6 +28,8 @@ async function measure(page, label, only = null) {
       // text parked off-screen (skip link at rest, sr-only) is not painted: it is measured in its visible state instead
       if (rects.every((r) => r.bottom <= 0 || r.right <= 0 || r.top >= innerHeight + scrollY + 5000)) continue;
       if (el.closest('.sr-only')) continue;
+      // content of a closed <details> is not painted; its boxes are measured in the "FAQ ouverte" scenario
+      const det = el.closest('details'); if (det && !det.open && !el.closest('summary')) continue;
       out.push({ txt: txt.slice(0, 40), rgb: m.slice(0, 3), a: (m[3] ?? 1) * op, size: parseFloat(cs.fontSize), bold: parseInt(cs.fontWeight, 10) >= 700,
         rects: rects.map((r) => [r.left + scrollX, r.top + scrollY, r.width, r.height]), tag: el.tagName.toLowerCase() + (el.className && typeof el.className === 'string' ? '.' + el.className.split(' ')[0] : '') });
     }

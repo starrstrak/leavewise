@@ -8,9 +8,9 @@ Sorties réelles conservées dans `tests-logs/` (un jeu `stepN-*.log` par étape
 | Unitaires, règles, API, sessions | `npm test` | **68/68** : `domain` 25, `flows` 11, `legal-rules` 14, `session` 8, `api-robustness` 10 |
 | Types | `npm run typecheck` | 0 erreur |
 | UI applicative | `npm run test:ui` | **14/14** |
-| Site vitrine | `npm run test:site:chromium` / `:webkit` | **32/32** et **32/32** ; Firefox ⛔ non exécutable |
+| Site vitrine (version générique multi-secteurs) | `npm run test:site` | **38/38** sur Chromium ; WebKit/Firefox non rejoués dans cette session (navigateurs non installés) — dernier résultat WebKit connu : 32/32 sur l'ancienne version |
 | Accessibilité (axe-core) | `npm run test:a11y` | 39 pages/états, **0 violation** |
-| Contraste sur rendu réel | `npm run test:contrast` | 41 rendus, minimum **4,97:1**, 0 sous le seuil |
+| Contraste sur rendu réel | `npm run test:contrast` | 41 rendus, minimum **4,97:1**, 0 sous le seuil (après correction du test : le contenu d'un `<details>` fermé n'est pas peint, donc plus mesuré) |
 | CI | `.github/workflows/ci.yml` | rejouée en clone propre ✅ ; **exécution GitHub non vérifiée** |
 
 Itérations par étape (max. 3 autorisées, jamais atteintes sauf Firefox) : étape 1 : 1 (échec réel avant toute modification : Playwright non déclaré) ; étape 2 : 2 ; étape 3 : 1 ; étape 4 : 1 ; étape 5 : 1 (accessibilité), 2 (contraste), **3 (Firefox, escaladé)** ; étape 6 : 1.
@@ -112,3 +112,9 @@ Fichier : `.github/workflows/ci.yml` (Node 22, `ubuntu-latest`, permissions `con
 - Firefox : voir ci-dessus. Pas d'audit avec lecteur d'écran réel (VoiceOver, NVDA) ; axe-core ne couvre qu'une partie des critères WCAG, un audit manuel reste nécessaire.
 - Temps de chargement mesuré en local, pas sur réseau réel.
 - Traductions DE/EN : relecture humaine à faire. Règles légales : non validées par un juriste (voir RULES.md).
+
+## Mise à jour : site générique multi-secteurs
+Sorties : `tests-logs/site.log` (38/38), `a11y.log` (39/39, 0 violation), `contrast-render.log` (41/41), `ui-smoke.log` (14/14), `npm test` 68/68.
+Nouveaux tests : aucun terme propre à un secteur hors des exemples (FR/DE/EN) ; 5 exemples sectoriels et 8 paramètres présents dans les 3 langues ; navigation à 960 px.
+Itérations : 2 — (1) contraste : faux positif **du test** (texte d'un `<details>` fermé), corrigé ; (2) UI : 404 console réelle sur `/favicon.ico` de l'application, corrigée en déclarant l'icône ; le test UI n'est pas rejouable sur un état de démo déjà modifié (relancer avec `rm -rf app/data`).
+Environnement : le Playwright épinglé par le dépôt (1.64) cherche un Chromium absent de cette session ; les scripts acceptent `CHROMIUM_PATH` pour pointer vers un Chromium existant.

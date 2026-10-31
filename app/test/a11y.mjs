@@ -8,7 +8,7 @@ const base = (process.argv[2] ?? 'http://localhost:3000').replace(/\/$/, '');
 const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'];
 let failed = 0, minor = 0, audited = 0;
 
-const browser = await chromium.launch();
+const browser = await chromium.launch(process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH } : {});
 async function audit(page, label) {
   const res = await new AxeBuilder({ page }).withTags(TAGS).analyze();
   audited++;

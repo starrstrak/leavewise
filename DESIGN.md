@@ -15,7 +15,7 @@ Fichier unique : `site/tokens.css` (couleurs, polices, tailles, rayons, ombres, 
 - Rayons 6/10/16 px, boutons en pilule ; ombres froides légères ; échelle d'espacement 4-112 px ; typographie fluide (`clamp`).
 
 ## Structure de la page (brief)
-Barre fixe (logo, liens, FR/DE/EN, thème, Se connecter, Essai gratuit) → hero (badge, titre avec fin en accent, sous-titre, 2 boutons, mention) → maquette de la vue manager avec « Pharmacien présent ✓ » → 3 chiffres → 6 fonctionnalités numérotées → 3 étapes → 3 tarifs (« Recommandé » en carte sombre) → FAQ en accordéon (6 questions, dont nLPD et droit suisse) → appel final → pied de page (Confidentialité, Conditions, Contact, page `legal.html`).
+Barre fixe (logo, liens, FR/DE/EN, thème, Se connecter, Essai gratuit) → hero (badge, titre avec fin en accent, sous-titre, 2 boutons, mention) → maquette de la vue manager avec « Couverture minimale respectée ✓ » → 3 chiffres → 6 fonctionnalités numérotées → **secteurs et règlement** (5 exemples de règles de couverture + 8 paramètres, carte sombre) → 3 étapes → 3 tarifs (« Recommandé » en carte sombre) → FAQ en accordéon (7 questions, dont nLPD, droit suisse et adaptation au secteur) → appel final → pied de page (Confidentialité, Conditions, Contact, page `legal.html`).
 
 ## Contenus et promesses
 Tous les textes sont originaux (`site/locales/fr|de|en.json`, DE/EN « à relire »). Les chiffres sont ceux du dépôt (68 tests, 3 langues, 0 donnée sensible par défaut ; le chiffre des tests est dans `site/locales/*.json`, à mettre à jour avec TESTS.md) et sont signalés « chiffres du prototype, pas des résultats de clients ». Les tarifs CHF sont marqués « Exemple ». Aucune statistique client inventée.
@@ -25,3 +25,6 @@ Mobile d'abord (menu replié < 960 px), lien d'évitement, balises sémantiques,
 
 ## Génération
 `site/index.template.html` + `locales/fr.json` → `npm run site:build` produit `index.html` et `legal.html` (français par défaut, lisible sans JavaScript, sans dérive possible avec `fr.json`). `site/site.js` applique DE/EN.
+
+## Site générique (multi-secteurs)
+Le site ne s'adresse plus à un seul métier : le vocabulaire de pharmacie n'apparaît que dans les exemples (cas de démonstration, section « secteurs », mention du hero, FAQ adaptation), ce que `site-tests.mjs` vérifie dans les trois langues. Les exemples sectoriels sont des règles que le moteur sait exprimer (qualification requise, effectif minimum, absents simultanés maximum). Limite assumée et écrite sur le site : l'adaptation passe en partie par l'écran admin, le reste par des fichiers de configuration ; un éditeur complet reste à construire.

@@ -1,6 +1,6 @@
-# Prototype congés et remplacements (pharmacie, canton de Fribourg)
+# Prototype congés et remplacements (générique ; démo : pharmacie, canton de Fribourg)
 
-Prototype fonctionnel, **données fictives uniquement**. Gère demandes d'absence, tri automatique justifié, couverture « au moins un pharmacien », remplacements planifiés et imprévus, audit. Les règles légales sont des paramètres **à valider par un juriste** (pas un avis juridique).
+Prototype fonctionnel, **données fictives uniquement**. Gère demandes d'absence, tri automatique justifié, couverture minimale paramétrable (démo : « au moins un pharmacien »), remplacements planifiés et imprévus, audit. Les règles légales sont des paramètres **à valider par un juriste** (pas un avis juridique).
 
 ## Lancer en une commande
 ```bash
