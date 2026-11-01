@@ -12,6 +12,7 @@ import { rankForRequest } from './actions.js';
 import { balancesFor, canSeeEmployee, viewDecision } from './views.js';
 import { buildDemoState, DEMO_NOW } from '../../demo/seed.js';
 import * as V from './validate.js';
+import * as C from './config.js';
 import { checkOwnerToken, checkToken, cookieHeader, DEFAULT_TTL_SECONDS, loadSecret, makeOwnerToken, makeToken, OWNER_COOKIE, OWNER_TTL_SECONDS, ownerCookieHeader, readCookie } from './session.js';
 import type { Half, State } from './types.js';
 
@@ -23,9 +24,12 @@ const ownerFile = join(dataDir, 'owner-state.json');
 const MAX_IMPORT_BYTES = 5 * 1024 * 1024;
 const OWNER_MIN_PASSWORD = 12;
 
-export interface Store { state: State; now: string }
+/** `live`: the clock follows real time (new workspaces); otherwise `now` is a simulated, fixed date. */
+export interface Store { state: State; now: string; live?: boolean }
+const realNow = (ms = Date.now()) => new Date(ms).toISOString().slice(0, 16);
+export const blankStore = (): Store => ({ state: C.blankState(), now: realNow(), live: true });
 
-export function loadStore(file = dataFile): Store {
+export function loadStore(file = dataFile, fallback: () => Store = () => ({ state: buildDemoState(), now: DEMO_NOW })): Store {
   if (file && existsSync(file)) {
     try {
       const st = JSON.parse(readFileSync(file, 'utf8'));
@@ -38,7 +42,7 @@ export function loadStore(file = dataFile): Store {
       console.error(`state file unreadable (${(e as Error).message}); kept as ${aside}`);
     }
   }
-  return { state: buildDemoState(), now: DEMO_NOW };
+  return fallback();
 }
 
 /** Atomic write: temp file in the same directory, fsync, then rename (a crash never leaves a half-written state). */
@@ -85,7 +89,7 @@ export function createApp(store: Store, persistFile: string | null = dataFile, o
   const ttl = opts.ttlSeconds ?? DEFAULT_TTL_SECONDS;
   const nowSec = () => Math.floor((opts.clock ?? Date.now)() / 1000);
   const ownerEnabled = !!opts.ownerPassword && opts.ownerPassword.length >= OWNER_MIN_PASSWORD;
-  const ownerStore: Store = opts.ownerStore ?? { state: buildDemoState(), now: DEMO_NOW };
+  const ownerStore: Store = opts.ownerStore ?? blankStore();
   const ownerPersist = opts.ownerFile === undefined ? ownerFile : opts.ownerFile;
   const maxFailures = opts.ownerMaxFailures ?? 5, windowMs = opts.ownerWindowMs ?? 15 * 60_000, failDelay = opts.ownerFailDelayMs ?? 400;
   const failures = new Map<string, { n: number; first: number }>();
@@ -99,14 +103,15 @@ export function createApp(store: Store, persistFile: string | null = dataFile, o
     const isOwner = ownerEnabled && checkOwnerToken(secret, readCookie(req.headers.cookie, OWNER_COOKIE), nowSec());
     const st = isOwner ? ownerStore : store;
     const save = () => persist(st);
-    const s = st.state, now = st.now;
+    const s = st.state, now = st.live ? realNow(nowMs) : st.now;
     const lng: Lang = V.lang(url.searchParams.get('lng'));
     const route = `${req.method} ${url.pathname}`;
     if (route === 'GET /healthz') return { json: { ok: true } };
     if (route === 'GET /api/locale') return { json: locale(lng) };
     const sess = checkToken(secret, readCookie(req.headers.cookie), nowSec());
     if (route === 'GET /api/bootstrap') {
-      return { json: { now, session: sess.ok ? { userId: sess.userId } : null, owner: { enabled: ownerEnabled, authenticated: isOwner },
+      return { json: { now, session: sess.ok ? { userId: sess.userId } : null, owner: { enabled: ownerEnabled, authenticated: isOwner, blank: isOwner && !!s.org && s.employees.length <= 1 }, org: s.org ?? null, live: !!st.live,
+        qualifications: s.qualifications.map((q) => ({ code: q.code, label: q.label ?? null, critical: q.canOpen && q.countsAsQualified && !q.mustBeSupervised })),
         employees: s.employees.map((e) => ({ id: e.id, name: e.name, role: e.role, status: e.status, qualifications: e.qualifications })) } };
     }
     // ---- owner space (private, complete, free): password-gated, separate state from the public demo ----
@@ -137,7 +142,12 @@ export function createApp(store: Store, persistFile: string | null = dataFile, o
         ownerStore.state = imp.state; ownerStore.now = V.isoDateTime(imp.now, 'now'); save();
         return { json: { ok: true, employees: imp.state.employees.length, requests: imp.state.absences.length } };
       }
-      if (route === 'POST /api/owner/reset') { ownerStore.state = buildDemoState(); ownerStore.now = DEMO_NOW; save(); return { json: { ok: true } }; }
+      if (route === 'POST /api/owner/reset') {
+        const mode = V.oneOf(body.mode ?? 'blank', ['blank', 'demo'] as const, 'mode');
+        const fresh = mode === 'demo' ? { state: buildDemoState(), now: DEMO_NOW, live: false } : blankStore();
+        ownerStore.state = fresh.state; ownerStore.now = fresh.now; ownerStore.live = fresh.live; save();
+        return { json: { ok: true, mode } };
+      }
       throw new HttpError(404, 'not_found');
     }
     // Demo sign-in: choosing a demo role is the whole login (no password, no personal data).
@@ -155,6 +165,17 @@ export function createApp(store: Store, persistFile: string | null = dataFile, o
     const seg = url.pathname.split('/').filter(Boolean); // api, x, id?, action?
 
     switch (route) {
+      // ---- workspace setup: owner space only (the public demo stays read-mostly), admin role required ----
+      case 'GET /api/config': {
+        need(isOwner && me.role === 'admin');
+        return { json: { org: s.org ?? { name: '', sector: '' }, qualifications: s.qualifications, rules: A.currentRules(s, now), employees: s.employees, now, live: !!st.live } };
+      }
+      case 'PUT /api/org': { need(isOwner && me.role === 'admin'); const r = C.setOrg(s, body, me.id, now); save(); return { json: r }; }
+      case 'PUT /api/qualifications': {
+        need(isOwner && me.role === 'admin');
+        const r = C.setQualifications(s, body.qualifications, me.id, now); save(); return { json: r };
+      }
+      case 'POST /api/employees': { need(isOwner && me.role === 'admin'); const r = C.addEmployee(s, body, me.id, now); save(); return { status: 201, json: r }; }
       case 'GET /api/me': {
         const bal = balancesFor(s, now, me).find((b) => b.employeeId === me.id);
         const sp = s.sensitive.find((x) => x.employeeId === me.id);
@@ -233,10 +254,20 @@ export function createApp(store: Store, persistFile: string | null = dataFile, o
       case 'POST /api/consent': {
         A.setConsent(s, me.id, V.consentInput(body), me.id, now); save(); return { json: s.sensitive.find((x) => x.employeeId === me.id) };
       }
-      case 'POST /api/clock': { need(me.role === 'admin'); st.now = V.isoDateTime(body.now, 'now'); save(); return { json: { now: st.now } }; }
+      case 'POST /api/clock': {
+        need(me.role === 'admin');
+        if (body.live === true) { st.live = true; st.now = realNow(nowMs); } else { st.live = false; st.now = V.isoDateTime(body.now, 'now'); }
+        save(); return { json: { now: st.live ? realNow(nowMs) : st.now, live: !!st.live } };
+      }
       case 'POST /api/reset': { need(me.role === 'admin'); st.state = buildDemoState(); st.now = DEMO_NOW; save(); return { json: { ok: true } }; }
     }
     // parametric routes
+    if (seg[1] === 'employees' && seg[2] && (req.method === 'PUT' || req.method === 'DELETE')) {
+      need(isOwner && me.role === 'admin');
+      const id = V.id(seg[2], 'id');
+      if (req.method === 'DELETE') { C.removeEmployee(s, id, me.id, now); save(); return { json: { ok: true } }; }
+      const r = C.updateEmployee(s, id, body, me.id, now); save(); return { json: r };
+    }
     if (seg[1] === 'requests' && seg[2] && req.method === 'POST') {
       V.id(seg[2], 'id');
       const a = s.absences.find((x) => x.id === seg[2]);
@@ -327,7 +358,7 @@ if (process.argv[1]?.endsWith('server.ts')) {
   if (ownerPassword && ownerPassword.length < OWNER_MIN_PASSWORD) console.error(`OWNER_PASSWORD ignoré : ${OWNER_MIN_PASSWORD} caractères minimum, espace propriétaire désactivé`);
   createApp(loadStore(), dataFile, {
     secret: envSecret && envSecret.length >= 32 ? envSecret : loadSecret(secretFile),
-    ownerPassword, ownerStore: loadStore(ownerFile), ownerFile,
+    ownerPassword, ownerStore: loadStore(ownerFile, blankStore), ownerFile,
   }).listen(port, () => console.log(`Leavewise proto: http://localhost:${port}  (donnees fictives)${ownerPassword && ownerPassword.length >= OWNER_MIN_PASSWORD ? '  [espace propriétaire actif]' : ''}`));
 }
 

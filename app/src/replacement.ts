@@ -13,7 +13,9 @@ export function canStandIn(e: Employee, qual: QualCode, ctx: Ctx): boolean {
   return e.qualifications.some((c) => {
     const q = ctx.qualifications.find((x) => x.code === c);
     if (!q) return false;
-    if (qual === 'pharmacist') return q.countsAsQualified && q.canOpen && !q.mustBeSupervised;
+    // 'critical' = the qualification the coverage rule requires ('pharmacist' kept as a legacy alias)
+    if (qual === 'critical' || qual === 'pharmacist') return q.countsAsQualified && q.canOpen && !q.mustBeSupervised;
+    if (qual === 'headcount') return !q.mustBeSupervised;
     return q.canReplace.includes(qual);
   });
 }

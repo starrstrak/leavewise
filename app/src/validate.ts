@@ -14,12 +14,12 @@ const bad = (code: string, field?: string): never => { throw new ValidationError
 export function isObject(v: unknown): v is Obj { return typeof v === 'object' && v !== null && !Array.isArray(v); }
 export function body(v: unknown): Obj { return isObject(v) ? v : bad('body_must_be_object'); }
 
-export function isoDate(v: unknown, field: string): string {
+export function isoDate(v: unknown, field: string, minYear = 2000, maxYear = 2100): string {
   if (typeof v !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(v)) return bad('invalid_date', field);
   const d = new Date(v + 'T00:00:00Z');
   if (Number.isNaN(d.getTime()) || d.toISOString().slice(0, 10) !== v) return bad('invalid_date', field);
   const y = Number(v.slice(0, 4));
-  if (y < 2000 || y > 2100) return bad('date_out_of_range', field);
+  if (y < minYear || y > maxYear) return bad('date_out_of_range', field);
   return v;
 }
 export function isoDateTime(v: unknown, field: string): string {

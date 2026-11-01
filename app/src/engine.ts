@@ -152,7 +152,7 @@ export function alternatives(req: Absence, emp: Employee, ctx: Ctx, accepted: Ab
     const tops: string[] = [];
     let all = true;
     for (const v of viol) {
-      const { ranked } = rankCandidates(v.slot, 'pharmacist', ctx, [...base, req], [], viol.map((x) => x.slot));
+      const { ranked } = rankCandidates(v.slot, 'critical', ctx, [...base, req], [], viol.map((x) => x.slot));
       if (!ranked.length) { all = false; break; }
       tops.push(ranked[0].employeeId);
     }

@@ -1,6 +1,7 @@
 export type Half = 'AM' | 'PM';
 export type Role = 'employee' | 'manager' | 'hr' | 'admin';
-export type QualCode = 'pharmacist' | 'assistant' | 'apprentice' | 'intern' | 'admin';
+/** Free-form qualification code defined by the organisation (the demo uses pharmacist, assistant, apprentice, intern, admin). */
+export type QualCode = string;
 export type EmpStatus = 'employee' | 'part_time' | 'apprentice' | 'intern' | 'external_temp' | 'manager';
 export type AbsenceType =
   | 'vacation' | 'sickness' | 'accident' | 'special' | 'training'
@@ -25,6 +26,8 @@ export interface Slot { date: string; half: Half }
 
 export interface Qualification {
   code: QualCode;
+  /** display name chosen by the organisation; falls back to the translated demo label */
+  label?: string;
   canOpen: boolean;
   countsAsQualified: boolean;
   mustBeSupervised: boolean;
@@ -125,7 +128,7 @@ export interface ReplacementRequest {
 }
 
 export interface CoverageRule {
-  minQualified: number;       // pharmacists present
+  minQualified: number;       // qualified people present (qualification that can open)
   minHeadcount: number;
   maxSimultaneousAbsent: number;
 }
@@ -205,4 +208,6 @@ export interface State {
   sensitive: SensitiveProfile[];
   peakHistory: PeakHistory[];
   seq: number;
+  /** organisation profile entered during setup (owner space) */
+  org?: { name: string; sector: string };
 }

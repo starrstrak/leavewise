@@ -17,7 +17,7 @@ const tab = async (n) => { await p.locator('#tabs button').nth(n).click(); await
 await pick('emp-claire'); await tab(1);
 await p.getByRole('button', { name: /Lancer le tri/ }).click(); await p.waitForTimeout(400);
 ok((await p.locator('article.card').count()) >= 5, 'manager: triage cards displayed');
-ok((await p.locator('main').innerText()).includes('Aucun pharmacien présent'), 'manager: justification en français');
+ok((await p.locator('main').innerText()).includes('Aucune personne qualifiée présente'), 'manager: justification en français');
 ok(!/\b(ui|reason|alt|outcome)\.[a-z_]+/.test(await p.locator('main').innerText()), 'manager: aucune clé de traduction brute');
 await p.locator('article.card input[type=checkbox]').first().check();
 await p.getByRole('button', { name: /Valider la sélection/ }).click(); await p.waitForTimeout(400);
@@ -25,7 +25,7 @@ await p.screenshot({ path: process.env.SHOT_DIR ? `${process.env.SHOT_DIR}/queue
 
 await tab(2);
 ok((await p.locator('.cal td').count()) > 20, 'coverage grid rendered');
-ok((await p.locator('main').innerText()).includes('Pharmacien présent ✓'), 'coverage shows pharmacist present');
+ok((await p.locator('main').innerText()).includes('Qualifié·e présent·e ✓'), 'coverage shows pharmacist present');
 
 await pick('emp-lea'); await tab(0);
 ok((await p.locator('main').innerText()).includes('Solde de vacances'), 'employee: balance visible');

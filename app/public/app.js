@@ -1,5 +1,5 @@
 // Minimal role-based UI. All visible text comes from /api/locale (no hard-coded strings).
-let owner = { enabled: false, authenticated: false }, L = {}, lng = localStorage.getItem('lng') || 'fr', user = localStorage.getItem('user') || '', me = null, now = '', people = [], tab = 'me';
+let owner = { enabled: false, authenticated: false }, org = null, quals = [], live = false, L = {}, lng = localStorage.getItem('lng') || 'fr', user = localStorage.getItem('user') || '', me = null, now = '', people = [], tab = 'me';
 const $ = (s) => document.querySelector(s);
 const get = (o, p) => {
   if (o == null || typeof o !== 'object') return p ? undefined : o;
@@ -43,6 +43,7 @@ const fail = (e) => { const box = h('div', { class: 'error', role: 'alert' }, `$
 const isMgr = () => ['manager', 'hr', 'admin'].includes(me.role);
 const isHr = () => ['hr', 'admin'].includes(me.role);
 const name = (id) => people.find((p) => p.id === id)?.name ?? id;
+const qlabel = (code) => quals.find((q) => q.code === code)?.label ?? (get(L, 'qual.' + code) ?? code);
 const period = (a) => `${a.start} ${t('ui.' + a.startHalf.toLowerCase())} → ${a.end} ${t('ui.' + a.endHalf.toLowerCase())}`;
 const badge = (txt, cls = '') => h('span', { class: `badge ${cls}` }, txt);
 const stCls = { approved: 'ok', refused: 'bad', cancelled: 'bad', submitted: 'warn', cancel_requested: 'warn' };
@@ -70,22 +71,28 @@ async function init() {
 
 async function load() {
   L = await (await fetch(`/api/locale?lng=${lng}`)).json();
-  const boot = await (await fetch('/api/bootstrap')).json(); now = boot.now; owner = boot.owner ?? owner;
+  const boot = await (await fetch('/api/bootstrap')).json(); now = boot.now; owner = boot.owner ?? owner; org = boot.org; quals = boot.qualifications ?? []; live = !!boot.live;
+  people = boot.employees;
+  if (!people.some((p) => p.id === user)) { user = people[0].id; await signIn(user); }
+  const sel = $('#user');
+  sel.replaceChildren(...people.map((p) => h('option', { value: p.id, selected: p.id === user }, p.name)));
   me = people.find((p) => p.id === user);
   applyI18n();
-  $('#clock').textContent = now.replace('T', ' ');
+  $('#clock').textContent = now.replace('T', ' ') + (live ? ` (${t('ui.clock_live')})` : '');
+  $('#brand').textContent = org?.name ? `${t('app.name')} — ${org.name}` : t('app.name');
   $('#roleLabel').textContent = t('role.' + me.role);
   const tabs = [['me', 'ui.tab_me']];
   if (isMgr()) tabs.push(['queue', 'ui.tab_queue']);
   tabs.push(['coverage', 'ui.tab_coverage'], ['repl', 'ui.tab_repl']);
   if (isHr()) tabs.push(['audit', 'ui.tab_audit'], ['export', 'ui.tab_export']);
   if (me.role === 'admin') tabs.push(['admin', 'ui.tab_admin']);
+  if (owner.authenticated && me.role === 'admin') tabs.push(['setup', 'ui.tab_setup']);
   // the owner tab is not advertised: it shows once signed in, or when the page is opened with #owner
   if (owner.enabled && (owner.authenticated || location.hash === '#owner')) tabs.push(['owner', 'ui.tab_owner']);
   $('#ownerBanner').hidden = !owner.authenticated;
   if (!tabs.some(([k]) => k === tab)) tab = 'me';
   $('#tabs').replaceChildren(...tabs.map(([k, label]) => h('button', { 'aria-current': k === tab ? 'page' : null, onclick: () => { tab = k; load(); } }, t(label))));
-  const view = { me: viewMe, queue: viewQueue, coverage: viewCoverage, repl: viewRepl, audit: viewAudit, export: viewExport, admin: viewAdmin, owner: viewOwner }[tab];
+  const view = { me: viewMe, queue: viewQueue, coverage: viewCoverage, repl: viewRepl, audit: viewAudit, export: viewExport, admin: viewAdmin, owner: viewOwner, setup: viewSetup }[tab];
   $('#main').replaceChildren();
   try { await view(); } catch (e) { fail(e); }
 }
@@ -241,7 +248,7 @@ async function viewRepl() {
     const reason = h('input', { placeholder: t('ui.reason_required'), 'aria-label': t('ui.reason_required') });
     const mine = rr.offers.find((o) => o.candidateId === user && o.status === 'pending');
     main.append(h('article', { class: 'card' },
-      h('div', { class: 'row' }, h('strong', {}, rr.id), badge(t('rstatus.' + rr.status), rr.status === 'filled' ? 'ok' : 'warn'), badge(t('qual.' + rr.qualification)), `${rr.kind} · ${slotsTxt(rr)}`, rr.late ? badge('!', 'bad') : null),
+      h('div', { class: 'row' }, h('strong', {}, rr.id), badge(t('rstatus.' + rr.status), rr.status === 'filled' ? 'ok' : 'warn'), badge(qlabel(rr.qualification)), `${rr.kind} · ${slotsTxt(rr)}`, rr.late ? badge('!', 'bad') : null),
       h('ul', {}, rr.offers.map((o) => h('li', {}, `${name(o.candidateId)} — ${o.status}${o.reminders ? ' (rappel)' : ''}`))),
       rr.ranking.length ? h('p', { class: 'muted' }, rr.ranking.slice(0, 4).map((c) => `${name(c.employeeId)} (${c.score})`).join(' · ')) : null,
       mine ? h('div', { class: 'row' }, h('button', { class: 'primary', onclick: act(() => api(`/replacements/${rr.id}/respond`, 'POST', { accept: true })) }, t('ui.accept')),
@@ -308,7 +315,7 @@ async function viewOwner() {
     main.append(h('h2', {}, t('ui.owner_login_title')), h('form', { class: 'form card', onsubmit: act(async (e) => {
       e.preventDefault();
       await api('/owner/login', 'POST', { password: pw.value });
-      pw.value = '';
+      pw.value = ''; tab = 'setup';
     }) }, tf(t('ui.owner_password'), pw), h('button', { class: 'primary' }, t('ui.owner_login'))));
     return;
   }
@@ -327,6 +334,115 @@ async function viewOwner() {
         const r = await api('/owner/import', 'POST', JSON.parse(await file.files[0].text()));
         $('#main').dataset.imported = String(r.employees);
       }) }, t('ui.apply')),
-      h('button', { onclick: act(async () => { if (confirm(t('ui.owner_reset_confirm'))) await api('/owner/reset', 'POST', {}); }) }, t('ui.owner_reset')),
+      h('button', { onclick: act(async () => { if (confirm(t('ui.owner_fresh_confirm'))) { await api('/owner/reset', 'POST', { mode: 'blank' }); tab = 'setup'; } }) }, t('ui.owner_fresh')),
+      h('button', { onclick: act(async () => { if (confirm(t('ui.owner_demo_confirm'))) { await api('/owner/reset', 'POST', { mode: 'demo' }); tab = 'me'; } }) }, t('ui.owner_demo')),
       h('button', { onclick: act(async () => { await api('/owner/logout', 'POST', {}); tab = 'me'; }) }, t('ui.owner_logout'))));
+}
+
+/* ---------- workspace setup (owner space, admin) ---------- */
+async function viewSetup() {
+  const cfg = await api('/config');
+  const main = $('#main');
+  const rules = cfg.rules, cov = rules.coverage;
+  const critical = (e) => e.qualifications.some((c) => { const q = cfg.qualifications.find((x) => x.code === c); return q && q.canOpen && q.countsAsQualified && !q.mustBeSupervised; });
+  const steps = [
+    ['ui.step_org', !!cfg.org.name], ['ui.step_cov', null], ['ui.step_quals', null],
+    ['ui.step_team', cfg.employees.some((e) => e.role === 'manager') && cfg.employees.some(critical) && cfg.employees.length >= 3],
+    ['ui.step_rules', null], ['ui.step_test', cfg.employees.length >= 3 ? null : false],
+  ];
+  const done = (v) => (v === true ? badge(t('ui.done'), 'ok') : v === false ? badge(t('ui.todo'), 'warn') : '');
+  main.append(h('h2', {}, t('ui.setup_title')), h('p', { class: 'muted' }, t('ui.setup_intro')),
+    h('section', { class: 'card' }, h('h3', {}, t('ui.steps')), h('ol', {}, steps.map(([k, v]) => h('li', {}, t(k), ' ', done(v))))));
+
+  // organisation, opening hours, coverage, holidays
+  const days = [1, 2, 3, 4, 5];
+  const orgForm = h('form', { class: 'form', onsubmit: act(async (e) => {
+    e.preventDefault(); const f = new FormData(e.target);
+    await api('/org', 'PUT', { name: f.get('name'), sector: f.get('sector') });
+    await api('/rules', 'PUT', {
+      effectiveFrom: '2000-01-01', holidayScope: f.get('scope'),
+      opening: { weekdays: days.filter((d) => f.get('d' + d) === 'on'), saturdayHalves: ['AM', 'PM'].filter((x) => f.get('sat' + x) === 'on') },
+      coverage: { minQualified: Number(f.get('minq')), minHeadcount: Number(f.get('minh')), maxSimultaneousAbsent: Number(f.get('maxa')) },
+    });
+  }) },
+    tf(t('ui.org_name'), h('input', { name: 'name', value: cfg.org.name, maxlength: 80 })),
+    tf(t('ui.sector'), h('input', { name: 'sector', value: cfg.org.sector, maxlength: 80 })),
+    tf(t('ui.holiday_scope'), h('select', { name: 'scope' }, ['catholic', 'protestant'].map((x) => h('option', { value: x, selected: rules.holidayScope === x }, t('ui.scope_' + x))))),
+    h('fieldset', {}, h('legend', {}, t('ui.opening_days')),
+      days.map((d) => h('label', {}, t('ui.wd' + d), h('input', { type: 'checkbox', name: 'd' + d, checked: rules.opening.weekdays.includes(d) }))),
+      ['AM', 'PM'].map((x) => h('label', {}, t('ui.sat_' + x.toLowerCase()), h('input', { type: 'checkbox', name: 'sat' + x, checked: rules.opening.saturdayHalves.includes(x) })))),
+    tf(t('ui.cov_min_qualified'), h('input', { type: 'number', min: 0, max: 50, name: 'minq', value: cov.minQualified })),
+    tf(t('ui.cov_min_headcount'), h('input', { type: 'number', min: 0, max: 200, name: 'minh', value: cov.minHeadcount })),
+    tf(t('ui.cov_max_absent'), h('input', { type: 'number', min: 0, max: 200, name: 'maxa', value: cov.maxSimultaneousAbsent })),
+    h('button', { class: 'primary' }, t('ui.save')));
+  main.append(h('section', { class: 'card' }, h('h3', {}, t('ui.step_org') + ' · ' + t('ui.step_cov')), orgForm));
+
+  // qualifications
+  const qs = structuredClone(cfg.qualifications);
+  const qBox = h('div');
+  const drawQuals = () => {
+    qBox.replaceChildren(h('table', {},
+      h('thead', {}, h('tr', {}, [t('ui.q_code'), t('ui.q_label'), t('ui.q_open'), t('ui.q_counts'), t('ui.q_supervised'), t('ui.q_replace'), ''].map((x) => h('th', {}, x)))),
+      h('tbody', {}, qs.map((q, i) => h('tr', {},
+        h('td', {}, q.code),
+        h('td', {}, h('input', { value: q.label ?? q.code, 'aria-label': t('ui.q_label'), maxlength: 60, oninput: (e) => { q.label = e.target.value; } })),
+        ...['canOpen', 'countsAsQualified', 'mustBeSupervised'].map((k) => h('td', {}, h('input', { type: 'checkbox', checked: !!q[k], 'aria-label': `${q.code} ${k}`, onchange: (e) => { q[k] = e.target.checked; } }))),
+        h('td', {}, qs.map((o) => h('label', { class: 'inline' }, qlabelOf(o), h('input', { type: 'checkbox', checked: q.canReplace.includes(o.code), onchange: (e) => { q.canReplace = e.target.checked ? [...new Set([...q.canReplace, o.code])] : q.canReplace.filter((c) => c !== o.code); } })))),
+        h('td', {}, h('button', { type: 'button', onclick: () => { qs.splice(i, 1); drawQuals(); } }, t('ui.remove'))))))),
+      h('div', { class: 'row' },
+        h('input', { id: 'newQual', placeholder: t('ui.q_code'), 'aria-label': t('ui.q_code'), maxlength: 40 }),
+        h('button', { type: 'button', onclick: () => {
+          const code = $('#newQual').value.trim().replace(/\s+/g, '_');
+          if (!code) return;
+          qs.push({ code, label: code, canOpen: false, countsAsQualified: false, mustBeSupervised: false, canReplace: [code] }); drawQuals();
+        } }, t('ui.add_qual')),
+        h('button', { type: 'button', class: 'primary', onclick: act(() => api('/qualifications', 'PUT', { qualifications: qs })) }, t('ui.save'))));
+  };
+  const qlabelOf = (q) => q.label ?? q.code;
+  drawQuals();
+  main.append(h('section', { class: 'card' }, h('h3', {}, t('ui.step_quals')), qBox));
+
+  // team
+  let editing = null;
+  const teamBox = h('div');
+  const drawTeam = () => {
+    const e0 = editing ? cfg.employees.find((x) => x.id === editing) : null;
+    const f0 = e0 ?? { name: '', status: 'employee', role: 'employee', qualifications: [], occupancy: 1, schedule: {}, startDate: now.slice(0, 10), birthDate: '1990-01-01', managerIds: [], carryOverDays: 0 };
+    const form = h('form', { class: 'form', onsubmit: async (ev) => {
+      ev.preventDefault(); const f = new FormData(ev.target);
+      const schedule = {};
+      for (let d = 1; d <= 6; d++) { const hs = ['AM', 'PM'].filter((x) => f.get(`s${d}${x}`) === 'on'); if (hs.length) schedule[d] = hs; }
+      const body = { name: f.get('name'), status: f.get('status'), role: f.get('role'), qualifications: f.getAll('quals'), occupancy: Number(f.get('occ')) / 100, schedule,
+        startDate: f.get('start'), birthDate: f.get('birth'), managerIds: f.getAll('mgr'), carryOverDays: Number(f.get('carry') || 0) };
+      try { if (editing) await api(`/employees/${editing}`, 'PUT', body); else await api('/employees', 'POST', body); editing = null; await load(); } catch (err) { fail(err); }
+    } },
+      tf(t('ui.e_name'), h('input', { name: 'name', value: f0.name, required: true, maxlength: 80 })),
+      tf(t('ui.e_status'), h('select', { name: 'status' }, ['employee', 'part_time', 'apprentice', 'intern', 'external_temp', 'manager'].map((x) => h('option', { value: x, selected: f0.status === x }, t('ui.es_' + x))))),
+      tf(t('ui.e_role'), h('select', { name: 'role' }, ['employee', 'manager', 'hr', 'admin'].map((x) => h('option', { value: x, selected: f0.role === x }, t('role.' + x))))),
+      tf(t('ui.e_occ'), h('input', { type: 'number', min: 0, max: 100, name: 'occ', value: Math.round(f0.occupancy * 100) })),
+      tf(t('ui.e_start'), h('input', { type: 'date', name: 'start', value: f0.startDate, required: true })),
+      tf(t('ui.e_birth'), h('input', { type: 'date', name: 'birth', value: f0.birthDate, required: true })),
+      tf(t('ui.e_carry'), h('input', { type: 'number', min: 0, max: 60, step: 0.5, name: 'carry', value: f0.carryOverDays })),
+      h('fieldset', {}, h('legend', {}, t('ui.e_quals')), cfg.qualifications.map((q) => h('label', {}, qlabelOf(q), h('input', { type: 'checkbox', name: 'quals', value: q.code, checked: f0.qualifications.includes(q.code) })))),
+      h('fieldset', {}, h('legend', {}, t('ui.e_managers')), cfg.employees.filter((x) => x.id !== editing).map((x) => h('label', {}, x.name, h('input', { type: 'checkbox', name: 'mgr', value: x.id, checked: f0.managerIds.includes(x.id) })))),
+      h('fieldset', { class: 'sched' }, h('legend', {}, t('ui.e_schedule')), [1, 2, 3, 4, 5, 6].map((d) => h('div', { class: 'row' }, h('strong', {}, t('ui.wd' + d)),
+        ['AM', 'PM'].map((x) => h('label', {}, t('ui.' + x.toLowerCase()), h('input', { type: 'checkbox', name: `s${d}${x}`, checked: (f0.schedule[d] ?? []).includes(x) })))))),
+      h('div', { class: 'row' }, h('button', { class: 'primary' }, editing ? t('ui.update_employee') : t('ui.add_employee')),
+        editing ? h('button', { type: 'button', onclick: () => { editing = null; drawTeam(); } }, t('ui.cancel_edit')) : null));
+    teamBox.replaceChildren(
+      h('table', {}, h('thead', {}, h('tr', {}, [t('ui.e_name'), t('ui.e_status'), t('ui.e_role'), t('ui.e_quals'), t('ui.e_occ'), ''].map((x) => h('th', {}, x)))),
+        h('tbody', {}, cfg.employees.map((e) => h('tr', {}, h('td', {}, e.name), h('td', {}, t('ui.es_' + e.status)), h('td', {}, t('role.' + e.role)),
+          h('td', {}, e.qualifications.map(qlabel).join(', ')), h('td', {}, `${Math.round(e.occupancy * 100)} %`),
+          h('td', {}, h('button', { type: 'button', onclick: () => { editing = e.id; drawTeam(); form.scrollIntoView?.(); } }, t('ui.edit')),
+            e.id === 'emp-owner' ? null : h('button', { type: 'button', onclick: act(() => api(`/employees/${e.id}`, 'DELETE')) }, t('ui.delete'))))))),
+      form);
+  };
+  drawTeam();
+  main.append(h('section', { class: 'card' }, h('h3', {}, t('ui.step_team')), teamBox));
+
+  // clock
+  main.append(h('section', { class: 'card row' }, h('strong', {}, t('ui.clock')), live ? badge(t('ui.clock_live'), 'ok') : null,
+    h('input', { type: 'datetime-local', id: 'simNow', value: cfg.now.slice(0, 16), 'aria-label': t('ui.clock_sim') }),
+    h('button', { onclick: act(() => api('/clock', 'POST', { now: $('#simNow').value })) }, t('ui.clock_sim')),
+    h('button', { onclick: act(() => api('/clock', 'POST', { live: true })) }, t('ui.clock_back_live'))));
 }

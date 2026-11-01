@@ -108,7 +108,7 @@ export function createNeeds(s: State, a: Absence, kind: 'planned' | 'unplanned',
   const ctx = ctxOf(s, now);
   const viol = violations(slotsOfAbsence(a), ctx, activeAbsences(ctx));
   const out: ReplacementRequest[] = [];
-  const mk = (qual: 'pharmacist' | 'assistant', slots: Slot[]) => {
+  const mk = (qual: 'critical' | 'headcount', slots: Slot[]) => {
     if (!slots.length) return;
     const rr: ReplacementRequest = {
       id: nextId(s, 'P'), kind, sourceAbsenceId: a.id, slots, qualification: qual, status: 'open', offers: [],
@@ -117,8 +117,8 @@ export function createNeeds(s: State, a: Absence, kind: 'planned' | 'unplanned',
     s.replacements.push(rr); out.push(rr);
     audit(s, 'system', 'replacement.created', rr.id, now, undefined, undefined, { slots: slots.length, qualification: qual });
   };
-  mk('pharmacist', viol.filter((v) => v.code === 'coverage_pharmacist').map((v) => v.slot));
-  mk('assistant', viol.filter((v) => v.code !== 'coverage_pharmacist').map((v) => v.slot));
+  mk('critical', viol.filter((v) => v.code === 'coverage_pharmacist').map((v) => v.slot));
+  mk('headcount', viol.filter((v) => v.code !== 'coverage_pharmacist').map((v) => v.slot));
   if (out.length) for (const id of approversFor(s, a.employeeId, now).ids) notify(s, id, 'replacement_needed', { absenceId: a.id }, now);
   return out;
 }

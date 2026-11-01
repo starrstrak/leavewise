@@ -45,3 +45,8 @@ h1#brand { font-size: 1em; margin: 0; font-weight: 700; }
 
 .banner.owner { background: var(--ok-bg); color: var(--ok); margin-top: 0; }
 .banner[hidden] { display: none; }
+
+fieldset { border: 1px solid var(--line); border-radius: 6px; display: flex; flex-wrap: wrap; gap: 6px 14px; }
+fieldset legend { color: var(--muted); padding: 0 4px; }
+label.inline { display: inline-flex; gap: 4px; align-items: center; margin-right: 8px; font-size: 13px; }
+ol li { margin: 4px 0; }

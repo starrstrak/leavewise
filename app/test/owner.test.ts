@@ -35,7 +35,7 @@ describe('Espace propriétaire : privé, complet, séparé de la démo publique'
 
   it('T69 sans mot de passe configuré (ou trop court) : espace désactivé, aucune route ouverte', async () => {
     const st = await (await off.raw('/api/bootstrap')).json();
-    expect(st.owner).toEqual({ enabled: false, authenticated: false });
+    expect(st.owner).toMatchObject({ enabled: false, authenticated: false });
     const login = await off.raw('/api/owner/login', {}, 'POST', { password: PASSWORD });
     expect(login.status).toBe(404);
     expect(await err(login)).toBe('owner_disabled');
@@ -68,8 +68,8 @@ describe('Espace propriétaire : privé, complet, séparé de la démo publique'
     const tls = await on.raw('/api/owner/login', { 'x-forwarded-proto': 'https' }, 'POST', { password: PASSWORD });
     expect(tls.headers.get('set-cookie')).toMatch(/; Secure/);
     const ck = `${OWNER_COOKIE}=${cookieOf(r, OWNER_COOKIE)}`;
-    expect((await (await on.raw('/api/bootstrap', { cookie: ck })).json()).owner).toEqual({ enabled: true, authenticated: true });
-    expect((await (await on.raw('/api/bootstrap')).json()).owner).toEqual({ enabled: true, authenticated: false });
+    expect((await (await on.raw('/api/bootstrap', { cookie: ck })).json()).owner).toMatchObject({ enabled: true, authenticated: true });
+    expect((await (await on.raw('/api/bootstrap')).json()).owner).toMatchObject({ enabled: true, authenticated: false });
   });
 
   it('T72 données séparées : ce que fait le propriétaire n\'apparaît jamais côté public, et inversement', async () => {
@@ -150,7 +150,7 @@ describe('Espace propriétaire : privé, complet, séparé de la démo publique'
     dump.state.employees = dump.state.employees.filter((e: any) => e.id !== 'emp-noah');
     expect((await on.raw('/api/owner/import', h, 'POST', dump)).status).toBe(200);
     expect(on.ownerStore.state.employees.length).toBe(7);
-    expect((await on.raw('/api/owner/reset', h, 'POST', {})).status).toBe(200);
+    expect((await on.raw('/api/owner/reset', h, 'POST', { mode: 'demo' })).status).toBe(200);
     expect(on.ownerStore.state.employees.length).toBe(8);
     // déconnexion : le cookie est effacé côté navigateur ; un cookie conservé reste valide jusqu'à son expiration (jeton sans état)
     const out = await on.raw('/api/owner/logout', h, 'POST', {});
