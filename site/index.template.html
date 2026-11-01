@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title data-i18n="meta.title"></title>
+  <meta name="description" content="" data-i18n-attr="content:meta.desc">
+  <meta name="color-scheme" content="light dark">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="fonts/manrope-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="site.css">
+</head>
+<body>
+  <a class="skip" href="#main" data-i18n="skip"></a>
+  <header class="top">
+    <div class="wrap top-in">
+      <a class="brand" href="#top" aria-label="Leavewise">
+        <svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true" focusable="false"><rect width="28" height="28" rx="8" fill="var(--c-accent)"/><path d="M14 7v14M7 14h14" stroke="var(--c-accent-ink)" stroke-width="3" stroke-linecap="round"/></svg>
+        <span>Leavewise</span>
+      </a>
+      <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="nav" data-i18n="nav.menu"></button>
+      <nav id="nav" class="nav" aria-label="" data-i18n-attr="aria-label:nav.label">
+        <a href="#features" data-i18n="nav.features"></a>
+        <a href="#sectors" data-i18n="nav.sectors"></a>
+        <a href="#how" data-i18n="nav.how"></a>
+        <a href="#pricing" data-i18n="nav.pricing"></a>
+        <a href="#faq" data-i18n="nav.faq"></a>
+        <div class="nav-tools">
+          <label class="lang"><span class="sr" data-i18n="lang.label"></span>
+            <select id="lang"><option value="fr">FR</option><option value="de">DE</option><option value="en">EN</option></select>
+          </label>
+          <button class="icon-btn" id="themeBtn" aria-label="" data-i18n-attr="aria-label:theme.toggle">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+          </button>
+          <a class="btn btn-ghost" href="/" data-i18n="nav.login"></a>
+          <a class="btn btn-primary" href="/" data-i18n="nav.trial"></a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <section class="hero wrap" id="top">
+      <div class="hero-copy">
+        <p class="pill"><span class="dot" aria-hidden="true"></span><span data-i18n="hero.badge"></span></p>
+        <h1><span data-i18n="hero.title_a"></span> <em data-i18n="hero.title_b"></em></h1>
+        <p class="lead" data-i18n="hero.sub"></p>
+        <div class="cta-row">
+          <a class="btn btn-primary btn-lg" href="/" data-i18n="hero.cta1"></a>
+          <a class="btn btn-ghost btn-lg" href="#pricing" data-i18n="hero.cta2"></a>
+        </div>
+        <p class="note" data-i18n="hero.note"></p>
+      </div>
+
+      <figure class="preview" aria-labelledby="previewCap">
+        <div class="win" aria-hidden="true">
+          <div class="win-bar"><i></i><i></i><i></i><span class="url" data-i18n="mock.url"></span></div>
+          <div class="win-body">
+            <div class="mock-head"><strong data-i18n="mock.title"></strong><span class="chip" data-i18n="mock.count"></span></div>
+            <ul class="reqs">
+              <li><span class="avatar">LB</span><span class="req-t" data-i18n="mock.r1"></span><span class="acts"><b class="m-ok" data-i18n="mock.ok"></b><b class="m-no" data-i18n="mock.no"></b></span></li>
+              <li><span class="avatar">LP</span><span class="req-t" data-i18n="mock.r2"></span><span class="acts"><b class="m-ok" data-i18n="mock.ok"></b><b class="m-no" data-i18n="mock.no"></b></span></li>
+              <li><span class="avatar">SR</span><span class="req-t" data-i18n="mock.r3"></span><span class="acts"><b class="m-done" data-i18n="mock.done"></b></span></li>
+            </ul>
+            <div class="cover"><strong data-i18n="mock.cover"></strong><span data-i18n="mock.cover_sub"></span></div>
+            <div class="cal-head" data-i18n="mock.cal"></div>
+            <div class="mini-cal" data-days="mock.days"></div>
+          </div>
+        </div>
+        <figcaption id="previewCap" class="sr" data-i18n="preview.caption"></figcaption>
+      </figure>
+    </section>
+
+    <section class="wrap stats" aria-label="" data-i18n-attr="aria-label:stats.label">
+      <ul>
+        <li><strong data-i18n="stats.1.v"></strong><span data-i18n="stats.1.l"></span></li>
+        <li><strong data-i18n="stats.2.v"></strong><span data-i18n="stats.2.l"></span></li>
+        <li><strong data-i18n="stats.3.v"></strong><span data-i18n="stats.3.l"></span></li>
+      </ul>
+      <p class="fine" data-i18n="stats.note"></p>
+    </section>
+
+    <section class="section" id="features">
+      <div class="wrap">
+        <p class="kicker" data-i18n="features.kicker"></p>
+        <h2 data-i18n="features.title"></h2>
+        <ol class="cards">
+          <li class="card"><span class="num" aria-hidden="true">01</span><h3 data-i18n="f1.t"></h3><p data-i18n="f1.d"></p></li>
+          <li class="card"><span class="num" aria-hidden="true">02</span><h3 data-i18n="f2.t"></h3><p data-i18n="f2.d"></p></li>
+          <li class="card"><span class="num" aria-hidden="true">03</span><h3 data-i18n="f3.t"></h3><p data-i18n="f3.d"></p></li>
+          <li class="card"><span class="num" aria-hidden="true">04</span><h3 data-i18n="f4.t"></h3><p data-i18n="f4.d"></p></li>
+          <li class="card"><span class="num" aria-hidden="true">05</span><h3 data-i18n="f5.t"></h3><p data-i18n="f5.d"></p></li>
+          <li class="card"><span class="num" aria-hidden="true">06</span><h3 data-i18n="f6.t"></h3><p data-i18n="f6.d"></p></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section alt" id="sectors">
+      <div class="wrap">
+        <p class="kicker" data-i18n="adapt.kicker"></p>
+        <h2 data-i18n="adapt.title"></h2>
+        <p class="lead" data-i18n="adapt.lead"></p>
+        <div class="adapt">
+          <ul class="sectors">
+            <li class="card"><span class="chip" data-i18n="adapt.badge"></span><h3 data-i18n="sec1.t"></h3><p data-i18n="sec1.d"></p></li>
+            <li class="card"><span class="chip" data-i18n="adapt.badge"></span><h3 data-i18n="sec2.t"></h3><p data-i18n="sec2.d"></p></li>
+            <li class="card"><span class="chip" data-i18n="adapt.badge"></span><h3 data-i18n="sec3.t"></h3><p data-i18n="sec3.d"></p></li>
+            <li class="card"><span class="chip" data-i18n="adapt.badge"></span><h3 data-i18n="sec4.t"></h3><p data-i18n="sec4.d"></p></li>
+            <li class="card"><span class="chip" data-i18n="adapt.badge"></span><h3 data-i18n="sec5.t"></h3><p data-i18n="sec5.d"></p></li>
+          </ul>
+          <div class="card params">
+            <h3 data-i18n="params.t"></h3>
+            <ul class="ticks">
+              <li data-i18n="params.1"></li>
+              <li data-i18n="params.2"></li>
+              <li data-i18n="params.3"></li>
+              <li data-i18n="params.4"></li>
+              <li data-i18n="params.5"></li>
+              <li data-i18n="params.6"></li>
+              <li data-i18n="params.7"></li>
+              <li data-i18n="params.8"></li>
+            </ul>
+            <p class="fine" data-i18n="params.note"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="how">
+      <div class="wrap">
+        <p class="kicker" data-i18n="how.kicker"></p>
+        <h2 data-i18n="how.title"></h2>
+        <ol class="steps">
+          <li><span class="step-n" aria-hidden="true">1</span><h3 data-i18n="s1.t"></h3><p data-i18n="s1.d"></p></li>
+          <li><span class="step-n" aria-hidden="true">2</span><h3 data-i18n="s2.t"></h3><p data-i18n="s2.d"></p></li>
+          <li><span class="step-n" aria-hidden="true">3</span><h3 data-i18n="s3.t"></h3><p data-i18n="s3.d"></p></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section alt" id="pricing">
+      <div class="wrap">
+        <p class="kicker" data-i18n="pricing.kicker"></p>
+        <h2 data-i18n="pricing.title"></h2>
+        <p class="fine" data-i18n="pricing.note"></p>
+        <div class="plans">
+          <article class="plan">
+            <h3 data-i18n="p1.n"></h3><p class="plan-s" data-i18n="p1.s"></p>
+            <p class="price"><span class="cur">CHF</span> 39 <small data-i18n="p.month"></small> <span class="chip" data-i18n="p.example"></span></p>
+            <ul class="ticks"><li data-i18n="p1.1"></li><li data-i18n="p1.2"></li><li data-i18n="p1.3"></li></ul>
+            <a class="btn btn-ghost" href="/" data-i18n="p1.cta"></a>
+          </article>
+          <article class="plan featured">
+            <span class="reco" data-i18n="p.reco"></span>
+            <h3 data-i18n="p2.n"></h3><p class="plan-s" data-i18n="p2.s"></p>
+            <p class="price"><span class="cur">CHF</span> 89 <small data-i18n="p.month"></small> <span class="chip" data-i18n="p.example"></span></p>
+            <ul class="ticks"><li data-i18n="p2.1"></li><li data-i18n="p2.2"></li><li data-i18n="p2.3"></li><li data-i18n="p2.4"></li></ul>
+            <a class="btn btn-primary" href="/" data-i18n="p2.cta"></a>
+          </article>
+          <article class="plan">
+            <h3 data-i18n="p3.n"></h3><p class="plan-s" data-i18n="p3.s"></p>
+            <p class="price" data-i18n="p3.price"></p>
+            <ul class="ticks"><li data-i18n="p3.1"></li><li data-i18n="p3.2"></li><li data-i18n="p3.3"></li></ul>
+            <a class="btn btn-ghost" href="legal.html#contact" data-i18n="p3.cta"></a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="faq">
+      <div class="wrap narrow">
+        <p class="kicker" data-i18n="faq.kicker"></p>
+        <h2 data-i18n="faq.title"></h2>
+        <div class="faq">
+          <details><summary data-i18n="q1.q"></summary><p data-i18n="q1.a"></p></details>
+          <details><summary data-i18n="q2.q"></summary><p data-i18n="q2.a"></p></details>
+          <details><summary data-i18n="q3.q"></summary><p data-i18n="q3.a"></p></details>
+          <details><summary data-i18n="q4.q"></summary><p data-i18n="q4.a"></p></details>
+          <details><summary data-i18n="q5.q"></summary><p data-i18n="q5.a"></p></details>
+          <details><summary data-i18n="q6.q"></summary><p data-i18n="q6.a"></p></details>
+          <details><summary data-i18n="q7.q"></summary><p data-i18n="q7.a"></p></details>
+        </div>
+      </div>
+    </section>
+
+    <section class="final">
+      <div class="wrap">
+        <h2 data-i18n="cta.title"></h2>
+        <p data-i18n="cta.text"></p>
+        <a class="btn btn-light btn-lg" href="/" data-i18n="cta.button"></a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap foot-in">
+      <div><strong>Leavewise</strong><p class="fine" data-i18n="footer.tag"></p></div>
+      <nav aria-label="" data-i18n-attr="aria-label:footer.nav">
+        <a href="legal.html#privacy" data-i18n="footer.privacy"></a>
+        <a href="legal.html#terms" data-i18n="footer.terms"></a>
+        <a href="legal.html#contact" data-i18n="footer.contact"></a>
+      </nav>
+      <p class="fine" data-i18n="footer.copy"></p>
+    </div>
+  </footer>
+  <script src="site.js" type="module"></script>
+</body>
+</html>

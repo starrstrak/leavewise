@@ -1,0 +1,5 @@
+/healthz 200
+/ 200
+/site/ 200
+/site/fonts/manrope-latin-wght-normal.woff2 200
+/api/bootstrap 200

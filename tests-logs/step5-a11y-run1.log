@@ -1,0 +1,121 @@
+PASS site index.html FR light : 44 règles OK, 0 grave(s)/critique(s), 1 mineure(s)/modérée(s)
+  - [minor] aria-allowed-role: ARIA role should be appropriate for the element (1 nœud(s)) ex: figure |   ARIA role img is not allowed for given element
+PASS site legal.html FR light : 26 règles OK, 0 grave(s)/critique(s), 0 mineure(s)/modérée(s)
+PASS site index.html FR dark : 44 règles OK, 0 grave(s)/critique(s), 1 mineure(s)/modérée(s)
+  - [minor] aria-allowed-role: ARIA role should be appropriate for the element (1 nœud(s)) ex: figure |   ARIA role img is not allowed for given element
+PASS site legal.html FR dark : 26 règles OK, 0 grave(s)/critique(s), 0 mineure(s)/modérée(s)
+PASS site index.html DE light : 44 règles OK, 0 grave(s)/critique(s), 1 mineure(s)/modérée(s)
+  - [minor] aria-allowed-role: ARIA role should be appropriate for the element (1 nœud(s)) ex: figure |   ARIA role img is not allowed for given element
+PASS site index.html EN light : 44 règles OK, 0 grave(s)/critique(s), 1 mineure(s)/modérée(s)
+  - [minor] aria-allowed-role: ARIA role should be appropriate for the element (1 nœud(s)) ex: figure |   ARIA role img is not allowed for given element
+PASS site index.html FR mobile 375 : 41 règles OK, 0 grave(s)/critique(s), 1 mineure(s)/modérée(s)
+  - [minor] aria-allowed-role: ARIA role should be appropriate for the element (1 nœud(s)) ex: figure |   ARIA role img is not allowed for given element
+PASS site index.html FR mobile 375, menu ouvert : 44 règles OK, 0 grave(s)/critique(s), 1 mineure(s)/modérée(s)
+  - [minor] aria-allowed-role: ARIA role should be appropriate for the element (1 nœud(s)) ex: figure |   ARIA role img is not allowed for given element
+PASS site index.html FR light, FAQ ouverte : 44 règles OK, 0 grave(s)/critique(s), 1 mineure(s)/modérée(s)
+  - [minor] aria-allowed-role: ARIA role should be appropriate for the element (1 nœud(s)) ex: figure |   ARIA role img is not allowed for given element
+PASS app employée onglet « Mes demandes » FR light : 41 règles OK, 0 grave(s)/critique(s), 3 mineure(s)/modérée(s)
+  - [minor] empty-table-header: Table header text should not be empty (1 nœud(s)) ex: th:nth-child(5) |   Element does not have text that is visible to screen readers
+  - [moderate] page-has-heading-one: Page should contain a level-one heading (1 nœud(s)) ex: html |   Page must have a level-one heading
+  - [moderate] region: All page content should be contained by landmarks (1 nœud(s)) ex: .banner |   Some page content is not contained by landmarks
+FAIL app employée onglet « Couverture » FR light : 35 règles OK, 1 grave(s)/critique(s), 2 mineure(s)/modérée(s)
+  - [critical] aria-required-children: Certain ARIA roles must contain particular children (1 nœud(s)) ex: .cal |   Required ARIA children role not present: rowgroup, row
+  - [moderate] page-has-heading-one: Page should contain a level-one heading (1 nœud(s)) ex: html |   Page must have a level-one heading
+  - [moderate] region: All page content should be contained by landmarks (1 nœud(s)) ex: .banner |   Some page content is not contained by landmarks
+PASS app employée onglet « Remplacements » FR light : 32 règles OK, 0 grave(s)/critique(s), 2 mineure(s)/modérée(s)
+  - [moderate] page-has-heading-one: Page should contain a level-one heading (1 nœud(s)) ex: html |   Page must have a level-one heading
+  - [moderate] region: All page content should be contained by landmarks (1 nœud(s)) ex: div |   Some page content is not contained by landmarks
+PASS app manager onglet « Mes demandes » FR light : 41 règles OK, 0 grave(s)/critique(s), 3 mineure(s)/modérée(s)
+  - [minor] empty-table-header: Table header text should not be empty (1 nœud(s)) ex: th:nth-child(5) |   Element does not have text that is visible to screen readers
+  - [moderate] page-has-heading-one: Page should contain a level-one heading (1 nœud(s)) ex: html |   Page must have a level-one heading
+  - [moderate] region: All page content should be contained by landmarks (1 nœud(s)) ex: .banner |   Some page content is not contained by landmarks
+PASS app manager onglet « Tri des demandes » FR light : 34 règles OK, 0 grave(s)/critique(s), 2 mineure(s)/modérée(s)
+  - [moderate] page-has-heading-one: Page should contain a level-one heading (1 nœud(s)) ex: html |   Page must have a level-one heading
+  - [moderate] region: All page content should be contained by landmarks (1 nœud(s)) ex: .banner |   Some page content is not contained by landmarks
+FAIL app manager onglet « Couverture » FR light : 35 règles OK, 1 grave(s)/critique(s), 2 mineure(s)/modérée(s)
+  - [critical] aria-required-children: Certain ARIA roles must contain particular children (1 nœud(s)) ex: .cal |   Required ARIA children role not present: rowgroup, row
+  - [moderate] page-has-heading-one: Page should contain a level-one heading (1 nœud(s)) ex: html |   Page must have a level-one heading
+  - [moderate] region: All page content should be contained by landmarks (1 nœud(s)) ex: .banner |   Some page content is not contained by landmarks
+PASS app manager onglet « Remplacements » FR light : 32 règles OK, 0 grave(s)/critique(s), 2 mineure(s)/modérée(s)
+  - [moderate] page-has-heading-one: Page should contain a level-one heading (1 nœud(s)) ex: html |   Page must have a level-one heading
+  - [moderate] region: All page content should be contained by landmarks (1 nœud(s)) ex: .banner |   Some page content is not contained by landmarks
+PASS app admin onglet « Mes demandes » FR light : 41 règles OK, 0 grave(s)/critique(s), 3 mineure(s)/modérée(s)
+  - [minor] empty-table-header: Table header text should not be empty (1 nœud(s)) ex: th:nth-child(5) |   Element does not have text that is visible to screen readers
+  - [moderate] page-has-heading-one: Page should contain a level-one heading (1 nœud(s)) ex: html |   Page must have a level-one heading
+  - [moderate] region: All page content should be contained by landmarks (1 nœud(s)) ex: .banner |   Some page content is not contained by landmarks
+PASS app admin onglet « Tri des demandes » FR light : 34 règles OK, 0 grave(s)/critique(s), 2 mineure(s)/modérée(s)
+  - [moderate] page-has-heading-one: Page should contain a level-one heading (1 nœud(s)) ex: html |   Page must have a level-one heading
+  - [moderate] region: All page content should be contained by landmarks (1 nœud(s)) ex: .banner |   Some page content is not contained by landmarks
+FAIL app admin onglet « Couverture » FR light : 35 règles OK, 1 grave(s)/critique(s), 2 mineure(s)/modérée(s)
+  - [critical] aria-required-children: Certain ARIA roles must contain particular children (1 nœud(s)) ex: .cal |   Required ARIA children role not present: rowgroup, row
+  - [moderate] page-has-heading-one: Page should contain a level-one heading (1 nœud(s)) ex: html |   Page must have a level-one heading
+  - [moderate] region: All page content should be contained by landmarks (1 nœud(s)) ex: .banner |   Some page content is not contained by landmarks
+PASS app admin onglet « Remplacements » FR light : 32 règles OK, 0 grave(s)/critique(s), 2 mineure(s)/modérée(s)
+  - [moderate] page-has-heading-one: Page should contain a level-one heading (1 nœud(s)) ex: html |   Page must have a level-one heading
+  - [moderate] region: All page content should be contained by landmarks (1 nœud(s)) ex: .banner |   Some page content is not contained by landmarks
+PASS app admin onglet « Journal d'audit » FR light : 35 règles OK, 0 grave(s)/critique(s), 2 mineure(s)/modérée(s)
+  - [moderate] page-has-heading-one: Page should contain a level-one heading (1 nœud(s)) ex: html |   Page must have a level-one heading
+  - [moderate] region: All page content should be contained by landmarks (1 nœud(s)) ex: div |   Some page content is not contained by landmarks
+PASS app admin onglet « Exports » FR light : 31 règles OK, 0 grave(s)/critique(s), 2 mineure(s)/modérée(s)
+  - [moderate] page-has-heading-one: Page should contain a level-one heading (1 nœud(s)) ex: html |   Page must have a level-one heading
+  - [moderate] region: All page content should be contained by landmarks (1 nœud(s)) ex: .banner |   Some page content is not contained by landmarks
+PASS app admin onglet « Règlement » FR light : 32 règles OK, 0 grave(s)/critique(s), 2 mineure(s)/modérée(s)
+  - [moderate] page-has-heading-one: Page should contain a level-one heading (1 nœud(s)) ex: html |   Page must have a level-one heading
+  - [moderate] region: All page content should be contained by landmarks (1 nœud(s)) ex: div |   Some page content is not contained by landmarks
+PASS app employée onglet « Mes demandes » FR dark : 41 règles OK, 0 grave(s)/critique(s), 3 mineure(s)/modérée(s)
+  - [minor] empty-table-header: Table header text should not be empty (1 nœud(s)) ex: th:nth-child(5) |   Element does not have text that is visible to screen readers
+  - [moderate] page-has-heading-one: Page should contain a level-one heading (1 nœud(s)) ex: html |   Page must have a level-one heading
+  - [moderate] region: All page content should be contained by landmarks (1 nœud(s)) ex: .banner |   Some page content is not contained by landmarks
+FAIL app employée onglet « Couverture » FR dark : 35 règles OK, 1 grave(s)/critique(s), 2 mineure(s)/modérée(s)
+  - [critical] aria-required-children: Certain ARIA roles must contain particular children (1 nœud(s)) ex: .cal |   Required ARIA children role not present: rowgroup, row
+  - [moderate] page-has-heading-one: Page should contain a level-one heading (1 nœud(s)) ex: html |   Page must have a level-one heading
+  - [moderate] region: All page content should be contained by landmarks (1 nœud(s)) ex: .banner |   Some page content is not contained by landmarks
+PASS app employée onglet « Remplacements » FR dark : 32 règles OK, 0 grave(s)/critique(s), 2 mineure(s)/modérée(s)
+  - [moderate] page-has-heading-one: Page should contain a level-one heading (1 nœud(s)) ex: html |   Page must have a level-one heading
+  - [moderate] region: All page content should be contained by landmarks (1 nœud(s)) ex: div |   Some page content is not contained by landmarks
+PASS app manager onglet « Mes demandes » FR dark : 41 règles OK, 0 grave(s)/critique(s), 3 mineure(s)/modérée(s)
+  - [minor] empty-table-header: Table header text should not be empty (1 nœud(s)) ex: th:nth-child(5) |   Element does not have text that is visible to screen readers
+  - [moderate] page-has-heading-one: Page should contain a level-one heading (1 nœud(s)) ex: html |   Page must have a level-one heading
+  - [moderate] region: All page content should be contained by landmarks (1 nœud(s)) ex: .banner |   Some page content is not contained by landmarks
+PASS app manager onglet « Tri des demandes » FR dark : 34 règles OK, 0 grave(s)/critique(s), 2 mineure(s)/modérée(s)
+  - [moderate] page-has-heading-one: Page should contain a level-one heading (1 nœud(s)) ex: html |   Page must have a level-one heading
+  - [moderate] region: All page content should be contained by landmarks (1 nœud(s)) ex: .banner |   Some page content is not contained by landmarks
+FAIL app manager onglet « Couverture » FR dark : 35 règles OK, 1 grave(s)/critique(s), 2 mineure(s)/modérée(s)
+  - [critical] aria-required-children: Certain ARIA roles must contain particular children (1 nœud(s)) ex: .cal |   Required ARIA children role not present: rowgroup, row
+  - [moderate] page-has-heading-one: Page should contain a level-one heading (1 nœud(s)) ex: html |   Page must have a level-one heading
+  - [moderate] region: All page content should be contained by landmarks (1 nœud(s)) ex: .banner |   Some page content is not contained by landmarks
+PASS app manager onglet « Remplacements » FR dark : 32 règles OK, 0 grave(s)/critique(s), 2 mineure(s)/modérée(s)
+  - [moderate] page-has-heading-one: Page should contain a level-one heading (1 nœud(s)) ex: html |   Page must have a level-one heading
+  - [moderate] region: All page content should be contained by landmarks (1 nœud(s)) ex: .banner |   Some page content is not contained by landmarks
+PASS app admin onglet « Mes demandes » FR dark : 41 règles OK, 0 grave(s)/critique(s), 3 mineure(s)/modérée(s)
+  - [minor] empty-table-header: Table header text should not be empty (1 nœud(s)) ex: th:nth-child(5) |   Element does not have text that is visible to screen readers
+  - [moderate] page-has-heading-one: Page should contain a level-one heading (1 nœud(s)) ex: html |   Page must have a level-one heading
+  - [moderate] region: All page content should be contained by landmarks (1 nœud(s)) ex: .banner |   Some page content is not contained by landmarks
+PASS app admin onglet « Tri des demandes » FR dark : 34 règles OK, 0 grave(s)/critique(s), 2 mineure(s)/modérée(s)
+  - [moderate] page-has-heading-one: Page should contain a level-one heading (1 nœud(s)) ex: html |   Page must have a level-one heading
+  - [moderate] region: All page content should be contained by landmarks (1 nœud(s)) ex: .banner |   Some page content is not contained by landmarks
+FAIL app admin onglet « Couverture » FR dark : 35 règles OK, 1 grave(s)/critique(s), 2 mineure(s)/modérée(s)
+  - [critical] aria-required-children: Certain ARIA roles must contain particular children (1 nœud(s)) ex: .cal |   Required ARIA children role not present: rowgroup, row
+  - [moderate] page-has-heading-one: Page should contain a level-one heading (1 nœud(s)) ex: html |   Page must have a level-one heading
+  - [moderate] region: All page content should be contained by landmarks (1 nœud(s)) ex: .banner |   Some page content is not contained by landmarks
+PASS app admin onglet « Remplacements » FR dark : 32 règles OK, 0 grave(s)/critique(s), 2 mineure(s)/modérée(s)
+  - [moderate] page-has-heading-one: Page should contain a level-one heading (1 nœud(s)) ex: html |   Page must have a level-one heading
+  - [moderate] region: All page content should be contained by landmarks (1 nœud(s)) ex: .banner |   Some page content is not contained by landmarks
+PASS app admin onglet « Journal d'audit » FR dark : 35 règles OK, 0 grave(s)/critique(s), 2 mineure(s)/modérée(s)
+  - [moderate] page-has-heading-one: Page should contain a level-one heading (1 nœud(s)) ex: html |   Page must have a level-one heading
+  - [moderate] region: All page content should be contained by landmarks (1 nœud(s)) ex: div |   Some page content is not contained by landmarks
+PASS app admin onglet « Exports » FR dark : 31 règles OK, 0 grave(s)/critique(s), 2 mineure(s)/modérée(s)
+  - [moderate] page-has-heading-one: Page should contain a level-one heading (1 nœud(s)) ex: html |   Page must have a level-one heading
+  - [moderate] region: All page content should be contained by landmarks (1 nœud(s)) ex: .banner |   Some page content is not contained by landmarks
+PASS app admin onglet « Règlement » FR dark : 32 règles OK, 0 grave(s)/critique(s), 2 mineure(s)/modérée(s)
+  - [moderate] page-has-heading-one: Page should contain a level-one heading (1 nœud(s)) ex: html |   Page must have a level-one heading
+  - [moderate] region: All page content should be contained by landmarks (1 nœud(s)) ex: div |   Some page content is not contained by landmarks
+PASS app manager file de tri DE light : 34 règles OK, 0 grave(s)/critique(s), 2 mineure(s)/modérée(s)
+  - [moderate] page-has-heading-one: Page should contain a level-one heading (1 nœud(s)) ex: html |   Page must have a level-one heading
+  - [moderate] region: All page content should be contained by landmarks (1 nœud(s)) ex: .banner |   Some page content is not contained by landmarks
+PASS app manager file de tri EN light : 34 règles OK, 0 grave(s)/critique(s), 2 mineure(s)/modérée(s)
+  - [moderate] page-has-heading-one: Page should contain a level-one heading (1 nœud(s)) ex: html |   Page must have a level-one heading
+  - [moderate] region: All page content should be contained by landmarks (1 nœud(s)) ex: .banner |   Some page content is not contained by landmarks
+
+39 pages/états audités ; 6 avec violation grave/critique ; 73 violation(s) modérée(s)/mineure(s) listée(s)
+6 ÉCHEC(S)

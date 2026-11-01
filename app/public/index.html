@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Prototype congés et remplacements</title>
+  <link rel="icon" href="/site/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <a class="skip" href="#main" data-i18n="ui.skip">Contenu</a>
+  <header class="bar">
+    <h1 id="brand"></h1>
+    <label>
+      <span data-i18n="ui.user"></span>
+      <select id="user"></select>
+    </label>
+    <label>
+      <span data-i18n="ui.language"></span>
+      <select id="lng"><option value="fr">FR</option><option value="de">DE</option><option value="en">EN</option></select>
+    </label>
+    <span class="clock"><span data-i18n="ui.clock"></span> : <time id="clock"></time></span>
+    <span class="role" id="roleLabel"></span>
+    <div class="banner" data-i18n="ui.demo_banner"></div>
+    <div class="banner owner" id="ownerBanner" data-i18n="ui.owner_banner" hidden></div>
+  </header>
+  <nav id="tabs" aria-label="Navigation"></nav>
+  <main id="main" tabindex="-1"></main>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

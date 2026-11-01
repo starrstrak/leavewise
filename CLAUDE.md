@@ -5,7 +5,7 @@ Cas de référence : pharmacie, ouverture lun–sam, ≥ 1 pharmacien présent o
 Produit de référence : https://leavewise.nanocorp.app — inspiration fonctionnelle uniquement.
 
 ## Règles non négociables
-- Ne rien copier du produit de référence : ni code, ni textes, ni nom, ni logo, ni design.
+- Ne rien copier du produit de référence : ni code, ni textes, ni logo, ni design. **Exception décidée par l'utilisateur : le nom « Leavewise » est conservé** (risque de marque à valider, voir SPEC.md §7).
 - Toute affirmation sur le produit de référence porte une étiquette : [OBSERVÉ], [DÉDUIT], [HYPOTHÈSE À VALIDER].
 - Décision automatique = modifiable, justifiée (règle, critère, score), tracée (auteur, horodatage). L'humain tranche.
 - Données sensibles (situation familiale, santé) : désactivées par défaut, activation explicite admin + consentement employé, jamais exposées aux collègues ni managers non autorisés, jamais utilisées pour pénaliser.
@@ -18,13 +18,17 @@ Produit de référence : https://leavewise.nanocorp.app — inspiration fonction
 - Code : identifiants en anglais, commentaires rares, en français ou anglais selon le fichier voisin.
 
 ## Structure cible
-README.md · SPEC.md · RULES.md · DESIGN.md · TESTS.md · app/ · site/ · demo/ (données + script)
+README.md · SPEC.md · RULES.md · DESIGN.md · TESTS.md · app/ · site/ · demo/ (données + script) · .github/workflows/ · tests-logs/ (sorties réelles, ajoutées de force : `*.log` est ignoré)
 
-## Commandes (à compléter en Phase 5)
-- Lancer : `TBD`
-- Tests : `TBD`
+## Commandes
+- Installer : `npm install`
+- Lancer : `npm run dev` puis http://localhost:3000 (données fictives, état dans `app/data/`)
+- Démo scriptée : `npm run demo`
+- Tests : `npm test` ; types : `npm run typecheck` ; avec serveur lancé (`PORT` respecté) : `npm run test:ui`, `npm run test:site` (après `npm run site:build`), `npm run test:a11y`, `npm run test:contrast` ; navigateurs : `npx playwright install chromium`
+- Espace propriétaire privé : activé par `OWNER_PASSWORD` (≥ 12 car., jamais commité) ; test : `OWNER_PASSWORD=... npm run test:owner` (serveur lancé avec la même variable) ; accès via `/#owner`.
+- CI : `.github/workflows/ci.yml` (Node 22). Session de démo à cookie signé, secret dans `app/data/session.secret` (jamais commité).
 
 ## Workflow
-- Branche : `claude/eloquent-mendel-omcdya`. Un commit par fin de phase. Pas de PR sans demande.
+- Branche : `claude/serene-wozniak-2zgwtm`. Un commit par fin de phase ou d'étape. Pas de PR, de merge ni de force-push sans demande.
 - Plan présenté et validé avant tout code. Choix visuel (2 directions) validé avant le site.
 - Fin de phase : résumé ≤ 5 lignes (décisions, hypothèses ouvertes, phase suivante) + auto-vérification.

@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title data-i18n="meta.title">Leavewise — congés, couverture et remplacements pour votre équipe</title>
+  <meta name="description" data-i18n-attr="content:meta.desc" content="Prototype : planifiez les congés sans jamais laisser un créneau sans la présence requise. Décisions justifiées, remplacements, règlement adaptable à votre secteur.">
+  <meta name="color-scheme" content="light dark">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="fonts/manrope-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="site.css">
+</head>
+<body>
+  <a class="skip" href="#main" data-i18n="skip">Aller au contenu</a>
+  <header class="top">
+    <div class="wrap top-in">
+      <a class="brand" href="#top" aria-label="Leavewise">
+        <svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true" focusable="false"><rect width="28" height="28" rx="8" fill="var(--c-accent)"/><path d="M14 7v14M7 14h14" stroke="var(--c-accent-ink)" stroke-width="3" stroke-linecap="round"/></svg>
+        <span>Leavewise</span>
+      </a>
+      <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="nav" data-i18n="nav.menu">Menu</button>
+      <nav id="nav" class="nav" data-i18n-attr="aria-label:nav.label" aria-label="Navigation principale">
+        <a href="#features" data-i18n="nav.features">Fonctionnalités</a>
+        <a href="#sectors" data-i18n="nav.sectors">Secteurs</a>
+        <a href="#how" data-i18n="nav.how">Comment ça marche</a>
+        <a href="#pricing" data-i18n="nav.pricing">Tarifs</a>
+        <a href="#faq" data-i18n="nav.faq">FAQ</a>
+        <div class="nav-tools">
+          <label class="lang"><span class="sr" data-i18n="lang.label">Langue</span>
+            <select id="lang"><option value="fr">FR</option><option value="de">DE</option><option value="en">EN</option></select>
+          </label>
+          <button class="icon-btn" id="themeBtn" data-i18n-attr="aria-label:theme.toggle" aria-label="Thème clair ou sombre">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+          </button>
+          <a class="btn btn-ghost" href="/" data-i18n="nav.login">Se connecter</a>
+          <a class="btn btn-primary" href="/" data-i18n="nav.trial">Essai gratuit</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <section class="hero wrap" id="top">
+      <div class="hero-copy">
+        <p class="pill"><span class="dot" aria-hidden="true"></span><span data-i18n="hero.badge">Une présence minimale garantie sur chaque créneau</span></p>
+        <h1><span data-i18n="hero.title_a">Les congés de l'équipe,</span> <em data-i18n="hero.title_b">sans trou de couverture.</em></h1>
+        <p class="lead" data-i18n="hero.sub">Déposez, triez et validez les absences avec des décisions expliquées, et trouvez un remplaçant qualifié dès qu'un créneau se découvre. Vos qualifications, vos horaires, votre règlement.</p>
+        <div class="cta-row">
+          <a class="btn btn-primary btn-lg" href="/" data-i18n="hero.cta1">Démarrer l'essai gratuit</a>
+          <a class="btn btn-ghost btn-lg" href="#pricing" data-i18n="hero.cta2">Voir les tarifs</a>
+        </div>
+        <p class="note" data-i18n="hero.note">Prototype de démonstration (cas d'exemple : une pharmacie). Offre d'essai donnée à titre d'exemple.</p>
+      </div>
+
+      <figure class="preview" aria-labelledby="previewCap">
+        <div class="win" aria-hidden="true">
+          <div class="win-bar"><i></i><i></i><i></i><span class="url" data-i18n="mock.url">exemple.leavewise.test / équipe</span></div>
+          <div class="win-body">
+            <div class="mock-head"><strong data-i18n="mock.title">Demandes en attente</strong><span class="chip" data-i18n="mock.count">3 en attente</span></div>
+            <ul class="reqs">
+              <li><span class="avatar">LB</span><span class="req-t" data-i18n="mock.r1">Léa B. · vacances · 13–17 juil.</span><span class="acts"><b class="m-ok" data-i18n="mock.ok">Approuver</b><b class="m-no" data-i18n="mock.no">Refuser</b></span></li>
+              <li><span class="avatar">LP</span><span class="req-t" data-i18n="mock.r2">Luc P. · formation · 21 juil.</span><span class="acts"><b class="m-ok" data-i18n="mock.ok">Approuver</b><b class="m-no" data-i18n="mock.no">Refuser</b></span></li>
+              <li><span class="avatar">SR</span><span class="req-t" data-i18n="mock.r3">Sofia R. · vacances · 3–7 août</span><span class="acts"><b class="m-done" data-i18n="mock.done">Approuvé ✓</b></span></li>
+            </ul>
+            <div class="cover"><strong data-i18n="mock.cover">Couverture minimale respectée ✓</strong><span data-i18n="mock.cover_sub">Qualification requise présente sur tous les créneaux de la semaine du 13 juillet</span></div>
+            <div class="cal-head" data-i18n="mock.cal">Équipe · juillet (exemple)</div>
+            <div class="mini-cal" data-days="mock.days"><b class="dow">L</b><b class="dow">M</b><b class="dow">M</b><b class="dow">J</b><b class="dow">V</b><b class="dow">S</b><i class="ok"></i><i class="ok"></i><i class="ok"></i><i class="ok"></i><i class="away"></i><i class="away"></i><i class="away"></i><i class="away"></i><i class="away"></i><i class="ok"></i><i class="ok"></i><i class="ok"></i><i class="ok"></i><i class="ok"></i><i class="ok"></i><i class="ok"></i><i class="ok"></i><i class="ok"></i><i class="ok"></i><i class="ok"></i><i class="ok"></i><i class="ok"></i><i class="ok"></i><i class="ok"></i><i class="ok"></i><i class="ok"></i><i class="ok"></i><i class="ok"></i><i class="ok"></i><i class="ok"></i></div>
+          </div>
+        </div>
+        <figcaption id="previewCap" class="sr" data-i18n="preview.caption">Maquette illustrative de la vue manager : trois demandes en attente, boutons Approuver et Refuser, et un mini-calendrier d'équipe avec la couverture minimale respectée.</figcaption>
+      </figure>
+    </section>
+
+    <section class="wrap stats" data-i18n-attr="aria-label:stats.label" aria-label="Chiffres clés">
+      <ul>
+        <li><strong data-i18n="stats.1.v">68</strong><span data-i18n="stats.1.l">tests automatisés dans le dépôt du prototype</span></li>
+        <li><strong data-i18n="stats.2.v">3</strong><span data-i18n="stats.2.l">langues prévues : français, allemand, anglais</span></li>
+        <li><strong data-i18n="stats.3.v">0</strong><span data-i18n="stats.3.l">donnée sensible activée par défaut</span></li>
+      </ul>
+      <p class="fine" data-i18n="stats.note">Chiffres du prototype, pas des résultats de clients.</p>
+    </section>
+
+    <section class="section" id="features">
+      <div class="wrap">
+        <p class="kicker" data-i18n="features.kicker">Fonctionnalités</p>
+        <h2 data-i18n="features.title">Ce qu'il faut pour planifier sans risque</h2>
+        <ol class="cards">
+          <li class="card"><span class="num" aria-hidden="true">01</span><h3 data-i18n="f1.t">Couverture minimale garantie</h3><p data-i18n="f1.d">Chaque créneau d'ouverture est simulé : une demande qui laisserait un créneau sans la qualification ou l'effectif requis est signalée « impossible en l'état », avec des alternatives.</p></li>
+          <li class="card"><span class="num" aria-hidden="true">02</span><h3 data-i18n="f2.t">Tri expliqué</h3><p data-i18n="f2.d">Les demandes sont classées selon un score lisible (équité, rotation, urgence, ordre de dépôt). Vous voyez la règle appliquée et vous gardez le dernier mot.</p></li>
+          <li class="card"><span class="num" aria-hidden="true">03</span><h3 data-i18n="f3.t">Soldes au prorata</h3><p data-i18n="f3.d">Taux d'occupation, entrée en cours d'année, report plafonné et jours fériés (Fribourg par défaut, paramétrables) sont pris en compte automatiquement.</p></li>
+          <li class="card"><span class="num" aria-hidden="true">04</span><h3 data-i18n="f4.t">Remplaçants qualifiés</h3><p data-i18n="f4.d">La recherche classe les candidats par qualification, disponibilité, repos quotidien et heures déjà effectuées. Un apprenti ou un stagiaire n'est jamais proposé comme personne qualifiée.</p></li>
+          <li class="card"><span class="num" aria-hidden="true">05</span><h3 data-i18n="f5.t">Absences imprévues</h3><p data-i18n="f5.d">Déclaration rapide, alerte immédiate, relances, escalade puis plan B (horaires réduits ou fermeture) avec l'impact affiché.</p></li>
+          <li class="card"><span class="num" aria-hidden="true">06</span><h3 data-i18n="f6.t">Données protégées</h3><p data-i18n="f6.d">Les informations familiales sont désactivées par défaut, soumises au consentement et invisibles des collègues. Elles ne servent jamais à pénaliser.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section alt" id="sectors">
+      <div class="wrap">
+        <p class="kicker" data-i18n="adapt.kicker">Secteurs et règlement</p>
+        <h2 data-i18n="adapt.title">Adaptable à votre secteur, à votre règlement</h2>
+        <p class="lead" data-i18n="adapt.lead">Le moteur ne connaît qu'une règle générale : une qualification requise, un effectif minimum et un maximum d'absents simultanés par créneau. À vous de les définir.</p>
+        <div class="adapt">
+          <ul class="sectors">
+            <li class="card"><span class="chip" data-i18n="adapt.badge">Exemple de règle</span><h3 data-i18n="sec1.t">Pharmacie (cas de la démo)</h3><p data-i18n="sec1.d">Au moins un pharmacien présent à chaque ouverture ; apprentis et stagiaires comptés dans l'effectif seulement.</p></li>
+            <li class="card"><span class="chip" data-i18n="adapt.badge">Exemple de règle</span><h3 data-i18n="sec2.t">Santé et soins</h3><p data-i18n="sec2.d">Une personne diplômée présente sur chaque service ; remplaçants classés par qualification et repos légal.</p></li>
+            <li class="card"><span class="chip" data-i18n="adapt.badge">Exemple de règle</span><h3 data-i18n="sec3.t">Commerce et restauration</h3><p data-i18n="sec3.d">Effectif minimum en caisse ou en salle, fermetures hebdomadaires et saisonnières, pics à bloquer.</p></li>
+            <li class="card"><span class="chip" data-i18n="adapt.badge">Exemple de règle</span><h3 data-i18n="sec4.t">Artisanat et atelier</h3><p data-i18n="sec4.d">Une personne habilitée par équipe, périodes de blocage pendant les pics de commandes.</p></li>
+            <li class="card"><span class="chip" data-i18n="adapt.badge">Exemple de règle</span><h3 data-i18n="sec5.t">Bureau et services</h3><p data-i18n="sec5.d">Maximum d'absents simultanés par service, délégation du manager en cas d'absence.</p></li>
+          </ul>
+          <div class="card params">
+            <h3 data-i18n="params.t">Votre règlement, vos paramètres</h3>
+            <ul class="ticks">
+              <li data-i18n="params.1">Qualifications et ce qu'elles permettent</li>
+              <li data-i18n="params.2">Horaires d'ouverture et règle de couverture</li>
+              <li data-i18n="params.3">Préavis et durée maximale consécutive</li>
+              <li data-i18n="params.4">Périodes de blocage et fermetures collectives</li>
+              <li data-i18n="params.5">Absents simultanés autorisés par créneau</li>
+              <li data-i18n="params.6">Report et expiration des soldes</li>
+              <li data-i18n="params.7">Jours fériés selon votre canton</li>
+              <li data-i18n="params.8">Pondérations de priorité du tri</li>
+            </ul>
+            <p class="fine" data-i18n="params.note">Les valeurs légales fournies sont des paramètres par défaut, à faire valider par un juriste. Elles ne constituent pas un avis juridique.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="how">
+      <div class="wrap">
+        <p class="kicker" data-i18n="how.kicker">Comment ça marche</p>
+        <h2 data-i18n="how.title">Trois étapes pour démarrer</h2>
+        <ol class="steps">
+          <li><span class="step-n" aria-hidden="true">1</span><h3 data-i18n="s1.t">Décrivez votre organisation</h3><p data-i18n="s1.d">Définissez vos qualifications, vos horaires, votre règle de couverture et votre règlement interne. Aucun code n'est nécessaire pour les paramètres courants.</p></li>
+          <li><span class="step-n" aria-hidden="true">2</span><h3 data-i18n="s2.t">Laissez le moteur proposer</h3><p data-i18n="s2.d">Les demandes sont triées, la couverture est simulée jour par jour et chaque décision proposée est justifiée.</p></li>
+          <li><span class="step-n" aria-hidden="true">3</span><h3 data-i18n="s3.t">Validez ou modifiez</h3><p data-i18n="s3.d">Vous approuvez, refusez ou ajustez avec un motif. Les impacts en cascade s'affichent, puis l'équipe est notifiée.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section alt" id="pricing">
+      <div class="wrap">
+        <p class="kicker" data-i18n="pricing.kicker">Tarifs</p>
+        <h2 data-i18n="pricing.title">Des tarifs simples, en francs suisses</h2>
+        <p class="fine" data-i18n="pricing.note">Exemple : montants indicatifs hors TVA, non contractuels, pour illustrer la présentation.</p>
+        <div class="plans">
+          <article class="plan">
+            <h3 data-i18n="p1.n">Petite équipe</h3><p class="plan-s" data-i18n="p1.s">Jusqu'à 10 employés</p>
+            <p class="price"><span class="cur">CHF</span> 39 <small data-i18n="p.month">/ mois</small> <span class="chip" data-i18n="p.example">Exemple</span></p>
+            <ul class="ticks"><li data-i18n="p1.1">Demandes et soldes</li><li data-i18n="p1.2">Couverture par créneau</li><li data-i18n="p1.3">Journal d'audit</li></ul>
+            <a class="btn btn-ghost" href="/" data-i18n="p1.cta">Essayer</a>
+          </article>
+          <article class="plan featured">
+            <span class="reco" data-i18n="p.reco">Recommandé</span>
+            <h3 data-i18n="p2.n">Équipe</h3><p class="plan-s" data-i18n="p2.s">Jusqu'à 30 employés</p>
+            <p class="price"><span class="cur">CHF</span> 89 <small data-i18n="p.month">/ mois</small> <span class="chip" data-i18n="p.example">Exemple</span></p>
+            <ul class="ticks"><li data-i18n="p2.1">Tout le plan Petite équipe</li><li data-i18n="p2.2">Tri justifié et traitement par lot</li><li data-i18n="p2.3">Remplacements et plan B</li><li data-i18n="p2.4">Exports CSV</li></ul>
+            <a class="btn btn-primary" href="/" data-i18n="p2.cta">Démarrer l'essai</a>
+          </article>
+          <article class="plan">
+            <h3 data-i18n="p3.n">Sur mesure</h3><p class="plan-s" data-i18n="p3.s">Plus de 30 employés</p>
+            <p class="price" data-i18n="p3.price">Sur devis</p>
+            <ul class="ticks"><li data-i18n="p3.1">Règlement et rôles adaptés</li><li data-i18n="p3.2">Intégrations calendrier</li><li data-i18n="p3.3">Accompagnement</li></ul>
+            <a class="btn btn-ghost" href="legal.html#contact" data-i18n="p3.cta">Nous écrire</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="faq">
+      <div class="wrap narrow">
+        <p class="kicker" data-i18n="faq.kicker">FAQ</p>
+        <h2 data-i18n="faq.title">Questions fréquentes</h2>
+        <div class="faq">
+          <details><summary data-i18n="q1.q">Mes données sont-elles protégées ?</summary><p data-i18n="q1.a">Le produit est conçu selon la nLPD : minimisation, accès restreint par rôle, journal d'audit. Les données sensibles (situation familiale, santé) sont désactivées par défaut et exigent l'activation par l'administrateur et le consentement de la personne. Ce prototype n'utilise que des données fictives.</p></details>
+          <details><summary data-i18n="q2.q">Le droit suisse du travail est-il appliqué ?</summary><p data-i18n="q2.a">Les règles du Code des obligations et de la loi sur le travail (vacances, repos, fériés fribourgeois) sont des paramètres par défaut, à faire valider par un juriste. Elles ne constituent pas un avis juridique.</p></details>
+          <details><summary data-i18n="q3.q">Qui prend la décision, l'outil ou nous ?</summary><p data-i18n="q3.a">Vous. Le moteur propose une décision justifiée (règle, critère, score). Chaque proposition est modifiable, tracée avec son auteur et son horodatage, et personne ne valide sa propre demande.</p></details>
+          <details><summary data-i18n="q4.q">Un apprenti ou un stagiaire peut-il compter comme personne qualifiée ?</summary><p data-i18n="q4.a">Non, par défaut. Ils comptent dans l'effectif mais jamais comme personne qualifiée, et une supervision reste requise. Chaque statut a ses limites paramétrables.</p></details>
+          <details><summary data-i18n="q5.q">Que se passe-t-il en cas de maladie le matin même ?</summary><p data-i18n="q5.a">L'absence est enregistrée, une alerte est envoyée, les remplaçants qualifiés sont classés puis sollicités. Sans réponse, la demande est relancée, escaladée au responsable puis aux RH, avec un plan B chiffré.</p></details>
+          <details><summary data-i18n="q6.q">Puis-je essayer sans engagement ?</summary><p data-i18n="q6.a">L'essai sans carte bancaire est une offre d'exemple dans cette maquette. Les conditions réelles seront définies avant tout lancement commercial.</p></details>
+          <details><summary data-i18n="q7.q">Puis-je l'adapter à mon secteur et à mon règlement ?</summary><p data-i18n="q7.a">Oui : qualifications, horaires, couverture minimale, préavis, blocages, fermetures, report de solde, jours fériés et pondérations sont des paramètres. Dans ce prototype, une partie se règle dans l'écran d'administration et le reste dans des fichiers de configuration ; un éditeur complet reste à construire. Le cas de démonstration est une pharmacie.</p></details>
+        </div>
+      </div>
+    </section>
+
+    <section class="final">
+      <div class="wrap">
+        <h2 data-i18n="cta.title">Prêt à planifier sans créneau découvert ?</h2>
+        <p data-i18n="cta.text">Essayez le prototype avec des données de démonstration.</p>
+        <a class="btn btn-light btn-lg" href="/" data-i18n="cta.button">Démarrer l'essai gratuit</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap foot-in">
+      <div><strong>Leavewise</strong><p class="fine" data-i18n="footer.tag">Prototype de gestion des congés et remplacements, pour tout secteur. Données fictives. Aucun lien avec un autre produit du même nom.</p></div>
+      <nav data-i18n-attr="aria-label:footer.nav" aria-label="Pied de page">
+        <a href="legal.html#privacy" data-i18n="footer.privacy">Confidentialité</a>
+        <a href="legal.html#terms" data-i18n="footer.terms">Conditions</a>
+        <a href="legal.html#contact" data-i18n="footer.contact">Contact</a>
+      </nav>
+      <p class="fine" data-i18n="footer.copy">© 2026 Leavewise (prototype). Tous droits réservés.</p>
+    </div>
+  </footer>
+  <script src="site.js" type="module"></script>
+</body>
+</html>

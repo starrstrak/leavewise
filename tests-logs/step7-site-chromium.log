@@ -1,0 +1,38 @@
+
+> leavewise-proto@0.1.0 test:site:chromium
+> BROWSER=chromium node site/site-tests.mjs http://localhost:${PORT:-3000}/site/
+
+PASS contrastes AA (clair) : min 5.13
+PASS contrastes AA (sombre) : min 5.94
+PASS mobile 375px : pas de défilement horizontal (375/375)
+PASS mobile : titre et cartes visibles
+PASS mobile : navigation repliée avec bouton menu
+PASS tablette 768px : pas de défilement horizontal (768/768)
+PASS tablette : titre et cartes visibles
+PASS tablette : navigation repliée avec bouton menu
+PASS bureau 1280px : pas de défilement horizontal (1280/1280)
+PASS bureau : titre et cartes visibles
+PASS bureau : navigation étendue
+PASS ancres internes (#main #top #features #how #pricing #faq) : toutes présentes
+PASS liens (/ legal.html#contact legal.html#privacy legal.html#terms) : tous valides
+PASS ancre #pricing : défilement vers la section sous la barre fixe
+PASS alternatives textuelles : maquette décrite, images avec alt
+PASS balises sémantiques : header/main/footer, un seul h1, nav étiquetée
+PASS fichiers de traduction : 121 clés présentes en FR, DE et EN
+PASS bascule FR sur index : 111 textes, manquants/incohérents : 0
+PASS bascule DE sur index : 111 textes, manquants/incohérents : 0
+PASS bascule EN sur index : 111 textes, manquants/incohérents : 0
+PASS bascule FR sur legal.html : 11 textes, manquants/incohérents : 0
+PASS bascule DE sur legal.html : 11 textes, manquants/incohérents : 0
+PASS bascule EN sur legal.html : 11 textes, manquants/incohérents : 0
+PASS sans JavaScript : contenu français complet, identique à fr.json
+PASS clavier : premier Tab = lien d'évitement
+PASS clavier : 25 éléments (A/SELECT/BUTTON/SUMMARY) atteignables, anneau de focus visible partout
+PASS FAQ : ouverture (Entrée) et fermeture (Espace) au clavier
+PASS FAQ : accordéon ouvre le contenu à la souris
+PASS menu mobile : Entrée ouvre, Échap ferme (aria-expanded)
+PASS chargement local : DOMContentLoaded 13 ms, load 27 ms
+PASS poids total transféré : 65 Ko (< 400 Ko, polices incluses)
+PASS console et réseau : 0 erreur(s) console, 0 requête(s) en échec 
+
+TOUS LES TESTS DU SITE PASSENT

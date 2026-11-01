@@ -1,0 +1,46 @@
+PASS contrastes AA (clair) : min 5.13
+PASS contrastes AA (sombre) : min 5.94
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+browserType.launch: Failed to launch the browser process.
+Browser logs:
+
+<launching> /Users/utilisateur/Library/Caches/ms-playwright/firefox-1555/firefox/Nightly.app/Contents/MacOS/firefox -no-remote -headless -profile /var/folders/ry/9wmck9hn3l968lhtjgwzwltw0000gn/T/playwright_firefoxdev_profile-O0kRKp -juggler-pipe -silent
+<launched> pid=52308
+[pid=52308][err] *** You are running in headless mode.
+[pid=52308][err] Could not find profile folder.
+[pid=52308] <process did exit: exitCode=1, signal=null>
+[pid=52308] starting temporary directories cleanup
+Call log:
+[2m  - <launching> /Users/utilisateur/Library/Caches/ms-playwright/firefox-1555/firefox/Nightly.app/Contents/MacOS/firefox -no-remote -headless -profile /var/folders/ry/9wmck9hn3l968lhtjgwzwltw0000gn/T/playwright_firefoxdev_profile-O0kRKp -juggler-pipe -silent[22m
+[2m  - <launched> pid=52308[22m
+[2m  - [pid=52308][err] *** You are running in headless mode.[22m
+[2m  - [pid=52308][err] Could not find profile folder.[22m
+[2m  - [pid=52308] <process did exit: exitCode=1, signal=null>[22m
+[2m  - [pid=52308] starting temporary directories cleanup[22m
+[2m  - [pid=52308] <gracefully close start>[22m
+[2m  - [pid=52308] <kill>[22m
+[2m  - [pid=52308] <skipped force kill spawnedProcess.killed=false processClosed=true>[22m
+[2m  - [pid=52308] finished temporary directories cleanup[22m
+[2m  - [pid=52308] <gracefully close end>[22m
+
+    at /Users/utilisateur/leavewise/site/site-tests.mjs:27:32 {
+  log: [
+    '  - <launching> /Users/utilisateur/Library/Caches/ms-playwright/firefox-1555/firefox/Nightly.app/Contents/MacOS/firefox -no-remote -headless -profile /var/folders/ry/9wmck9hn3l968lhtjgwzwltw0000gn/T/playwright_firefoxdev_profile-O0kRKp -juggler-pipe -silent',
+    '  - <launched> pid=52308',
+    '  - [pid=52308][err] *** You are running in headless mode.',
+    '  - [pid=52308][err] Could not find profile folder.',
+    '  - [pid=52308] <process did exit: exitCode=1, signal=null>',
+    '  - [pid=52308] starting temporary directories cleanup',
+    '  - [pid=52308] <gracefully close start>',
+    '  - [pid=52308] <kill>',
+    '  - [pid=52308] <skipped force kill spawnedProcess.killed=false processClosed=true>',
+    '  - [pid=52308] finished temporary directories cleanup',
+    '  - [pid=52308] <gracefully close end>'
+  ],
+  name: 'Error'
+}
+
+Node.js v25.9.0

@@ -1,0 +1,30 @@
+== npm ci
+
+Run `npm audit` for details.
+== typecheck
+
+== npm test
+ Test Files  5 passed (5)
+      Tests  68 passed (68)
+== site:build + diff
+
+> leavewise-proto@0.1.0 site:build
+> node site/build.mjs
+
+site built
+site pages up to date
+== server
+curl: (7) Failed to connect to localhost port 3010 after 2 ms: Couldn't connect to server
+server ready after 2s
+== ui smoke
+PASS language switch EN
+PASS console errors: 0 
+== site tests
+
+TOUS LES TESTS DU SITE PASSENT
+== a11y + contrast
+39 pages/états audités ; 0 avec violation grave/critique ; 0 violation(s) modérée(s)/mineure(s) listée(s)
+AUCUNE VIOLATION GRAVE OU CRITIQUE
+41 rendus mesurés ; 0 sous le seuil
+TOUS LES CONTRASTES RÉELS SONT CONFORMES AA
+== CI SIM OK
