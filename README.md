@@ -30,3 +30,13 @@ Session à cookie signé (choix de rôle sans mot de passe) : **ce n'est pas une
 ## Structure
 `app/` moteur, API, interface, tests · `.github/` CI · `demo/` données et script · `SPEC.md` `RULES.md` `TESTS.md` `DESIGN.md` · `site/` vitrine (direction « Alpin »).
 Produit de référence : inspiration fonctionnelle uniquement, rien n'est copié.
+
+## Espace propriétaire (privé, complet, gratuit)
+Un espace **réservé à une seule personne**, séparé de la démo publique : mêmes fonctions complètes (tous les rôles, tri, remplacements, règlement, audit, exports, horloge, réinitialisation), sans limite de plan, avec ses propres données.
+- **Activation** : définir la variable d'environnement `OWNER_PASSWORD` (12 caractères minimum, 16+ aléatoires conseillés). Sans elle, l'espace n'existe pas. Le mot de passe n'est jamais dans le dépôt.
+  - En local : `OWNER_PASSWORD='un-mot-de-passe-long-et-unique' npm run dev`
+  - Sur Render : Environment > `OWNER_PASSWORD` (le Blueprint la déclare sans valeur).
+- **Accès** : ouvrir l'application avec `/#owner`, onglet « Mon espace », saisir le mot de passe. Un cookie HttpOnly, SameSite=Strict (et Secure en HTTPS), valable 12 h, ouvre l'espace ; une bannière verte l'indique. L'onglet n'apparaît pas pour les autres visiteurs.
+- **Protection** : comparaison en temps constant, verrouillage après 5 échecs par client sur 15 min, aucune route propriétaire sans cookie valide (401), données jamais mélangées avec la démo publique.
+- **Persistance** : l'offre gratuite de Render n'a pas de disque : l'état est perdu au redémarrage. Utiliser « Exporter mon espace (JSON) » puis « Importer » pour le conserver.
+- **Limite** : un seul mot de passe partagé, pas de compte nominatif ni d'authentification à deux facteurs. Pour un usage plus sensible, passer à une vraie authentification (voir SPEC.md, « Reste à faire par un humain »).

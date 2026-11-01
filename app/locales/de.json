@@ -99,7 +99,20 @@
   "forbidden": "Zugriff für diese Rolle verweigert",
   "error": "Fehler",
   "actions": "Aktionen",
-  "skip": "Zum Inhalt"
+  "skip": "Zum Inhalt",
+  "tab_owner": "Mein Bereich",
+  "owner_title": "Privater Eigentümerbereich",
+  "owner_notice": "Voller, kostenloser Zugriff ohne Planlimit, nur für den Eigentümer. Daten getrennt von der öffentlichen Demo. Der Zustand geht beim Neustart des Servers verloren: exportieren Sie ihn, um ihn zu behalten.",
+  "owner_password": "Eigentümer-Passwort",
+  "owner_login": "Eintreten",
+  "owner_logout": "Bereich verlassen",
+  "owner_export": "Meinen Bereich exportieren (JSON)",
+  "owner_import": "Export importieren (JSON)",
+  "owner_reset": "Meinen Bereich zurücksetzen",
+  "owner_reset_confirm": "Ihren Bereich mit den Demodaten zurücksetzen? Änderungen gehen verloren.",
+  "owner_imported": "Import erfolgreich",
+  "owner_banner": "Privater Eigentümerbereich: Daten getrennt von der öffentlichen Demo",
+  "owner_login_title": "Zugang vorbehalten"
  },
  "role": {
   "employee": "Mitarbeitende",
@@ -197,21 +210,21 @@
   "min_consecutive_reminder": "Hinweis (nicht blockierend): Der längste zusammenhängende Ferienblock {year} beträgt {longest} Arbeitstag(e); empfohlen sind mindestens {min}."
  },
  "unit": {
-   "calendar": "Kalendertage",
-   "working": "Arbeitstage"
+  "calendar": "Kalendertage",
+  "working": "Arbeitstage"
  },
  "proof": {
-   "supporting_document": "Beleg",
-   "birth_certificate": "Geburtsurkunde oder -bescheinigung",
-   "medical_certificate": "Arztzeugnis"
+  "supporting_document": "Beleg",
+  "birth_certificate": "Geburtsurkunde oder -bescheinigung",
+  "medical_certificate": "Arztzeugnis"
  },
  "leave": {
-   "hint": "Standarddauer: {days} {unit} · Nachweis: {proof}. Von einer Juristin oder einem Juristen zu prüfen; kein garantierter Anspruch.",
-   "title": "Sonderurlaub, Mutterschaft, Vaterschaft, Betreuung von Angehörigen: Standarddauern (juristisch zu prüfen)",
-   "days": "Tage",
-   "yearly": "Jahreshöchstwert",
-   "consec_remind": "Hinweis: mindestens {min} zusammenhängende Arbeitstage Ferien pro Jahr (längster geplanter Block: {longest}).",
-   "consec_ok": "Geplante zusammenhängende Ferien: {longest} Arbeitstage (≥ {min})."
+  "hint": "Standarddauer: {days} {unit} · Nachweis: {proof}. Von einer Juristin oder einem Juristen zu prüfen; kein garantierter Anspruch.",
+  "title": "Sonderurlaub, Mutterschaft, Vaterschaft, Betreuung von Angehörigen: Standarddauern (juristisch zu prüfen)",
+  "days": "Tage",
+  "yearly": "Jahreshöchstwert",
+  "consec_remind": "Hinweis: mindestens {min} zusammenhängende Arbeitstage Ferien pro Jahr (längster geplanter Block: {longest}).",
+  "consec_ok": "Geplante zusammenhängende Ferien: {longest} Arbeitstage (≥ {min})."
  },
  "alt": {
   "partial": "Teilweise gewähren: vom {start} bis {end} ({halfDays} Halbtage).",
@@ -263,5 +276,13 @@
  "_meta": {
   "status": "à relire (traduction automatique du français)",
   "untranslated": []
+ },
+ "err": {
+  "invalid_password": "Falsches Passwort",
+  "too_many_attempts": "Zu viele Versuche, später erneut versuchen",
+  "owner_required": "Zugriff nur für den Eigentümer",
+  "owner_disabled": "Eigentümerbereich auf diesem Server nicht aktiviert",
+  "invalid_state_shape": "Ungültige Importdatei",
+  "payload_too_large": "Datei zu gross"
  }
 }

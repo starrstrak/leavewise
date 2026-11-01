@@ -6,3 +6,10 @@ services:
     plan: free
     healthCheckPath: /healthz
     autoDeploy: true
+    envVars:
+      # Espace propriétaire privé : à saisir dans le tableau de bord Render (jamais dans le dépôt). 16+ caractères conseillés.
+      - key: OWNER_PASSWORD
+        sync: false
+      # Secret de signature des cookies, généré une fois par Render : les sessions survivent aux redémarrages.
+      - key: SESSION_SECRET
+        generateValue: true

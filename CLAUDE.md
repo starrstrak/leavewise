@@ -25,6 +25,7 @@ README.md · SPEC.md · RULES.md · DESIGN.md · TESTS.md · app/ · site/ · de
 - Lancer : `npm run dev` puis http://localhost:3000 (données fictives, état dans `app/data/`)
 - Démo scriptée : `npm run demo`
 - Tests : `npm test` ; types : `npm run typecheck` ; avec serveur lancé (`PORT` respecté) : `npm run test:ui`, `npm run test:site` (après `npm run site:build`), `npm run test:a11y`, `npm run test:contrast` ; navigateurs : `npx playwright install chromium`
+- Espace propriétaire privé : activé par `OWNER_PASSWORD` (≥ 12 car., jamais commité) ; test : `OWNER_PASSWORD=... npm run test:owner` (serveur lancé avec la même variable) ; accès via `/#owner`.
 - CI : `.github/workflows/ci.yml` (Node 22). Session de démo à cookie signé, secret dans `app/data/session.secret` (jamais commité).
 
 ## Workflow

@@ -1,5 +1,5 @@
 // Minimal role-based UI. All visible text comes from /api/locale (no hard-coded strings).
-let L = {}, lng = localStorage.getItem('lng') || 'fr', user = localStorage.getItem('user') || '', me = null, now = '', people = [], tab = 'me';
+let owner = { enabled: false, authenticated: false }, L = {}, lng = localStorage.getItem('lng') || 'fr', user = localStorage.getItem('user') || '', me = null, now = '', people = [], tab = 'me';
 const $ = (s) => document.querySelector(s);
 const get = (o, p) => {
   if (o == null || typeof o !== 'object') return p ? undefined : o;
@@ -39,7 +39,7 @@ async function signIn(id) {
   const r = await fetch('/api/session', { method: 'POST', credentials: 'same-origin', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ userId: id }) });
   if (!r.ok) throw new Error((await r.json()).error || r.status);
 }
-const fail = (e) => { const box = h('div', { class: 'error', role: 'alert' }, `${t('ui.error')} : ${e.message}`); $('#main').prepend(box); };
+const fail = (e) => { const box = h('div', { class: 'error', role: 'alert' }, `${t('ui.error')} : ${get(L, 'err.' + e.message) ?? e.message}`); $('#main').prepend(box); };
 const isMgr = () => ['manager', 'hr', 'admin'].includes(me.role);
 const isHr = () => ['hr', 'admin'].includes(me.role);
 const name = (id) => people.find((p) => p.id === id)?.name ?? id;
@@ -70,7 +70,7 @@ async function init() {
 
 async function load() {
   L = await (await fetch(`/api/locale?lng=${lng}`)).json();
-  const boot = await (await fetch('/api/bootstrap')).json(); now = boot.now;
+  const boot = await (await fetch('/api/bootstrap')).json(); now = boot.now; owner = boot.owner ?? owner;
   me = people.find((p) => p.id === user);
   applyI18n();
   $('#clock').textContent = now.replace('T', ' ');
@@ -80,9 +80,12 @@ async function load() {
   tabs.push(['coverage', 'ui.tab_coverage'], ['repl', 'ui.tab_repl']);
   if (isHr()) tabs.push(['audit', 'ui.tab_audit'], ['export', 'ui.tab_export']);
   if (me.role === 'admin') tabs.push(['admin', 'ui.tab_admin']);
+  // the owner tab is not advertised: it shows once signed in, or when the page is opened with #owner
+  if (owner.enabled && (owner.authenticated || location.hash === '#owner')) tabs.push(['owner', 'ui.tab_owner']);
+  $('#ownerBanner').hidden = !owner.authenticated;
   if (!tabs.some(([k]) => k === tab)) tab = 'me';
   $('#tabs').replaceChildren(...tabs.map(([k, label]) => h('button', { 'aria-current': k === tab ? 'page' : null, onclick: () => { tab = k; load(); } }, t(label))));
-  const view = { me: viewMe, queue: viewQueue, coverage: viewCoverage, repl: viewRepl, audit: viewAudit, export: viewExport, admin: viewAdmin }[tab];
+  const view = { me: viewMe, queue: viewQueue, coverage: viewCoverage, repl: viewRepl, audit: viewAudit, export: viewExport, admin: viewAdmin, owner: viewOwner }[tab];
   $('#main').replaceChildren();
   try { await view(); } catch (e) { fail(e); }
 }
@@ -296,3 +299,34 @@ async function viewAdmin() {
 }
 
 init().catch((e) => { document.body.append(h('pre', {}, String(e))); });
+
+/* ---------- private owner space ---------- */
+async function viewOwner() {
+  const main = $('#main');
+  if (!owner.authenticated) {
+    const pw = h('input', { type: 'password', name: 'pw', autocomplete: 'current-password', required: true });
+    main.append(h('h2', {}, t('ui.owner_login_title')), h('form', { class: 'form card', onsubmit: act(async (e) => {
+      e.preventDefault();
+      await api('/owner/login', 'POST', { password: pw.value });
+      pw.value = '';
+    }) }, tf(t('ui.owner_password'), pw), h('button', { class: 'primary' }, t('ui.owner_login'))));
+    return;
+  }
+  const file = h('input', { type: 'file', accept: 'application/json,.json', 'aria-label': t('ui.owner_import') });
+  main.append(h('h2', {}, t('ui.owner_title')), h('p', { class: 'muted' }, t('ui.owner_notice')),
+    h('div', { class: 'row card' },
+      h('button', { onclick: async () => {
+        try {
+          const data = await api('/owner/export');
+          const a = h('a', { href: URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })), download: 'leavewise-owner-state.json' }); a.click();
+        } catch (e) { fail(e); }
+      } }, t('ui.owner_export')),
+      h('label', {}, t('ui.owner_import'), file),
+      h('button', { onclick: act(async () => {
+        if (!file.files[0]) return;
+        const r = await api('/owner/import', 'POST', JSON.parse(await file.files[0].text()));
+        $('#main').dataset.imported = String(r.employees);
+      }) }, t('ui.apply')),
+      h('button', { onclick: act(async () => { if (confirm(t('ui.owner_reset_confirm'))) await api('/owner/reset', 'POST', {}); }) }, t('ui.owner_reset')),
+      h('button', { onclick: act(async () => { await api('/owner/logout', 'POST', {}); tab = 'me'; }) }, t('ui.owner_logout'))));
+}

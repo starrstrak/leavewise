@@ -42,3 +42,6 @@ h1#brand { font-size: 1em; margin: 0; font-weight: 700; }
 .error { background: var(--bad-bg); color: var(--bad); padding: 8px 12px; border-radius: var(--radius); margin-bottom: 10px; }
 @media (max-width: 600px) { main { padding: 10px; } th, td { padding: 4px; } }
 .reminder { color: var(--warn); font-weight: 600; }
+
+.banner.owner { background: var(--ok-bg); color: var(--ok); margin-top: 0; }
+.banner[hidden] { display: none; }

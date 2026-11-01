@@ -18,7 +18,8 @@
     "test:contrast": "node app/test/contrast-render.mjs http://localhost:${PORT:-3000}",
     "test:site:chromium": "BROWSER=chromium node site/site-tests.mjs http://localhost:${PORT:-3000}/site/",
     "test:site:firefox": "BROWSER=firefox node site/site-tests.mjs http://localhost:${PORT:-3000}/site/",
-    "test:site:webkit": "BROWSER=webkit node site/site-tests.mjs http://localhost:${PORT:-3000}/site/"
+    "test:site:webkit": "BROWSER=webkit node site/site-tests.mjs http://localhost:${PORT:-3000}/site/",
+    "test:owner": "node app/test/owner-ui.mjs http://localhost:${PORT:-3000} \"$OWNER_PASSWORD\""
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.14.0",

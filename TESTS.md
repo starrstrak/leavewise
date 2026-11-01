@@ -118,3 +118,9 @@ Sorties : `tests-logs/site.log` (38/38), `a11y.log` (39/39, 0 violation), `contr
 Nouveaux tests : aucun terme propre à un secteur hors des exemples (FR/DE/EN) ; 5 exemples sectoriels et 8 paramètres présents dans les 3 langues ; navigation à 960 px.
 Itérations : 2 — (1) contraste : faux positif **du test** (texte d'un `<details>` fermé), corrigé ; (2) UI : 404 console réelle sur `/favicon.ico` de l'application, corrigée en déclarant l'icône ; le test UI n'est pas rejouable sur un état de démo déjà modifié (relancer avec `rm -rf app/data`).
 Environnement : le Playwright épinglé par le dépôt (1.64) cherche un Chromium absent de cette session ; les scripts acceptent `CHROMIUM_PATH` pour pointer vers un Chromium existant.
+
+## Espace propriétaire
+Sorties : `tests-logs/owner-ui.log` (14/14, dont axe sans violation) et `npm test` (77/77, dont `owner.test.ts` : T69 à T77).
+- T69 désactivé sans mot de passe (ou < 12 caractères) ; T70 mauvais mot de passe, routes fermées ; T71 cookie HttpOnly/SameSite/Secure ; T72 données séparées public/propriétaire (requêtes, réinitialisation, horloge) ; T73 tous les rôles utilisables ; T74 cookie falsifié, expiré, jeton de démo ou de session : refusés ; T75 verrouillage anti force brute par client (clé = dernier élément de X-Forwarded-For) ; T76 export, import validé, réinitialisation, déconnexion ; T77 limite d'import 5 Mo, origine croisée refusée.
+- Contrôle de sensibilité : deux mutations (cookie propriétaire ignoré ; verrouillage désactivé) font échouer 4 et 1 tests ; restauration puis 77/77.
+- Itérations : 1 pour chaque test. Non couvert : 2FA, révocation côté serveur d'un cookie déjà émis, test sur l'hébergeur réel (Render) avec HTTPS et proxy.

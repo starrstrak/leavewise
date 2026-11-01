@@ -99,7 +99,20 @@
     "forbidden": "Accès refusé pour ce rôle",
     "error": "Erreur",
     "actions": "Actions",
-    "skip": "Aller au contenu"
+    "skip": "Aller au contenu",
+    "tab_owner": "Mon espace",
+    "owner_title": "Espace propriétaire privé",
+    "owner_notice": "Accès complet et gratuit, sans limite de plan, réservé au propriétaire. Données séparées de la démo publique. L'état est perdu au redémarrage du serveur : exportez-le pour le conserver.",
+    "owner_password": "Mot de passe propriétaire",
+    "owner_login": "Entrer",
+    "owner_logout": "Quitter l'espace",
+    "owner_export": "Exporter mon espace (JSON)",
+    "owner_import": "Importer un export (JSON)",
+    "owner_reset": "Réinitialiser mon espace",
+    "owner_reset_confirm": "Réinitialiser votre espace avec les données de démonstration ? Les modifications seront perdues.",
+    "owner_imported": "Import réussi",
+    "owner_banner": "Espace propriétaire privé : données séparées de la démo publique",
+    "owner_login_title": "Accès réservé"
   },
   "role": {
     "employee": "Employé·e",
@@ -197,21 +210,21 @@
     "min_consecutive_reminder": "Rappel (non bloquant) : la plus longue période de vacances consécutives en {year} est de {longest} jour(s) ouvré(s) ; au moins {min} sont recommandés."
   },
   "unit": {
-     "calendar": "jours calendaires",
-     "working": "jours ouvrés"
+    "calendar": "jours calendaires",
+    "working": "jours ouvrés"
   },
   "proof": {
-     "supporting_document": "pièce justificative",
-     "birth_certificate": "acte ou certificat de naissance",
-     "medical_certificate": "certificat médical"
+    "supporting_document": "pièce justificative",
+    "birth_certificate": "acte ou certificat de naissance",
+    "medical_certificate": "certificat médical"
   },
   "leave": {
-     "hint": "Durée par défaut : {days} {unit} · justificatif : {proof}. À valider par un juriste ; ce n'est pas un droit garanti.",
-     "title": "Congés spéciaux, maternité, paternité, proche aidant : durées par défaut (à valider par un juriste)",
-     "days": "jours",
-     "yearly": "plafond annuel",
-     "consec_remind": "Rappel : au moins {min} jours ouvrés de vacances consécutifs dans l'année (plus longue période prévue : {longest}).",
-     "consec_ok": "Vacances consécutives prévues : {longest} jours ouvrés (≥ {min})."
+    "hint": "Durée par défaut : {days} {unit} · justificatif : {proof}. À valider par un juriste ; ce n'est pas un droit garanti.",
+    "title": "Congés spéciaux, maternité, paternité, proche aidant : durées par défaut (à valider par un juriste)",
+    "days": "jours",
+    "yearly": "plafond annuel",
+    "consec_remind": "Rappel : au moins {min} jours ouvrés de vacances consécutifs dans l'année (plus longue période prévue : {longest}).",
+    "consec_ok": "Vacances consécutives prévues : {longest} jours ouvrés (≥ {min})."
   },
   "alt": {
     "partial": "Accorder partiellement : du {start} au {end} ({halfDays} demi-journées).",
@@ -259,5 +272,13 @@
     "sensitive.consent_given": "Consentement donné",
     "sensitive.consent_withdrawn": "Consentement retiré",
     "sensitive.purged": "Données sensibles purgées"
+  },
+  "err": {
+    "invalid_password": "Mot de passe incorrect",
+    "too_many_attempts": "Trop de tentatives, réessayez plus tard",
+    "owner_required": "Accès réservé au propriétaire",
+    "owner_disabled": "Espace propriétaire non activé sur ce serveur",
+    "invalid_state_shape": "Fichier d'import invalide",
+    "payload_too_large": "Fichier trop volumineux"
   }
 }

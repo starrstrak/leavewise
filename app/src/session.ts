@@ -54,3 +54,15 @@ export function readCookie(header: string | undefined, name = SESSION_COOKIE): s
 
 export const cookieHeader = (value: string, maxAge: number) =>
   `${SESSION_COOKIE}=${value}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${maxAge}`;
+
+/* ---- owner space: a separate cookie, signed with a derived key, carrying no identity (only "owner" and an expiry) ---- */
+export const OWNER_COOKIE = 'lw_owner';
+export const OWNER_TTL_SECONDS = 12 * 3600;
+const ownerKey = (secret: string) => `${secret}:owner-space`;
+export const makeOwnerToken = (secret: string, nowSec: number, ttl = OWNER_TTL_SECONDS) => makeToken(ownerKey(secret), 'owner', nowSec, ttl);
+export const checkOwnerToken = (secret: string, token: string | undefined, nowSec: number) => {
+  const r = checkToken(ownerKey(secret), token, nowSec);
+  return r.ok && r.userId === 'owner';
+};
+export const ownerCookieHeader = (value: string, maxAge: number, secure: boolean) =>
+  `${OWNER_COOKIE}=${value}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${maxAge}${secure ? '; Secure' : ''}`;

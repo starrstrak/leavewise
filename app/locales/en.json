@@ -99,7 +99,20 @@
   "forbidden": "Access denied for this role",
   "error": "Error",
   "actions": "Actions",
-  "skip": "Skip to content"
+  "skip": "Skip to content",
+  "tab_owner": "My space",
+  "owner_title": "Private owner space",
+  "owner_notice": "Full, free access with no plan limits, reserved for the owner. Data is separate from the public demo. State is lost when the server restarts: export it to keep it.",
+  "owner_password": "Owner password",
+  "owner_login": "Enter",
+  "owner_logout": "Leave the space",
+  "owner_export": "Export my space (JSON)",
+  "owner_import": "Import an export (JSON)",
+  "owner_reset": "Reset my space",
+  "owner_reset_confirm": "Reset your space to the demo data? Your changes will be lost.",
+  "owner_imported": "Import succeeded",
+  "owner_banner": "Private owner space: data separate from the public demo",
+  "owner_login_title": "Restricted access"
  },
  "role": {
   "employee": "Employee",
@@ -197,21 +210,21 @@
   "min_consecutive_reminder": "Reminder (non-blocking): the longest consecutive vacation in {year} is {longest} working day(s); at least {min} are recommended."
  },
  "unit": {
-   "calendar": "calendar days",
-   "working": "working days"
+  "calendar": "calendar days",
+  "working": "working days"
  },
  "proof": {
-   "supporting_document": "supporting document",
-   "birth_certificate": "birth certificate",
-   "medical_certificate": "medical certificate"
+  "supporting_document": "supporting document",
+  "birth_certificate": "birth certificate",
+  "medical_certificate": "medical certificate"
  },
  "leave": {
-   "hint": "Default duration: {days} {unit} · document: {proof}. To be validated by a legal professional; not a guaranteed right.",
-   "title": "Special leave, maternity, paternity, carer: default durations (to be validated by a legal professional)",
-   "days": "days",
-   "yearly": "yearly cap",
-   "consec_remind": "Reminder: at least {min} consecutive working days of vacation per year (longest planned: {longest}).",
-   "consec_ok": "Planned consecutive vacation: {longest} working days (≥ {min})."
+  "hint": "Default duration: {days} {unit} · document: {proof}. To be validated by a legal professional; not a guaranteed right.",
+  "title": "Special leave, maternity, paternity, carer: default durations (to be validated by a legal professional)",
+  "days": "days",
+  "yearly": "yearly cap",
+  "consec_remind": "Reminder: at least {min} consecutive working days of vacation per year (longest planned: {longest}).",
+  "consec_ok": "Planned consecutive vacation: {longest} working days (≥ {min})."
  },
  "alt": {
   "partial": "Grant partially: from {start} to {end} ({halfDays} half-days).",
@@ -267,5 +280,13 @@
    "ui.alternatives",
    "ui.impact"
   ]
+ },
+ "err": {
+  "invalid_password": "Wrong password",
+  "too_many_attempts": "Too many attempts, try again later",
+  "owner_required": "Owner-only access",
+  "owner_disabled": "Owner space is not enabled on this server",
+  "invalid_state_shape": "Invalid import file",
+  "payload_too_large": "File too large"
  }
 }
