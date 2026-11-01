@@ -1,0 +1,26 @@
+PASS public : l'onglet « Mon espace » n'est pas affiché
+PASS public : pas d'onglet Configuration
+PASS public : bannière propriétaire masquée
+PASS lien #owner : formulaire de mot de passe affiché
+PASS axe (connexion) : aucune violation sérieuse
+PASS mauvais mot de passe : message traduit
+PASS bon mot de passe : bannière « Espace propriétaire privé » visible
+PASS arrivée directe sur la configuration d'un espace vierge
+PASS espace vierge : une seule personne (le propriétaire)
+PASS espace vierge : aucun vocabulaire de pharmacie
+PASS axe (configuration) : aucune violation sérieuse
+PASS nom de l'organisation enregistré et affiché
+PASS équipe : 4 personnes dans le sélecteur Utilisateur
+PASS étape « ajouter l'équipe » marquée faite
+PASS tri : demande impossible, justification générique (personne qualifiée)
+PASS tri : aucun vocabulaire de pharmacie
+PASS axe (mon espace) : aucune violation sérieuse
+PASS export JSON : 4 personnes et le nom de l'organisation
+PASS autre navigateur : ni espace propriétaire ni données de l'atelier
+PASS autre navigateur : export refusé (401)
+PASS chargement de la démo dans l'espace : 8 personnes
+PASS repartir de zéro : espace vierge à nouveau
+PASS déconnexion : retour à la démo publique
+PASS console : 0 erreur(s) 
+
+ESPACE PROPRIÉTAIRE : TOUS LES TESTS PASSENT

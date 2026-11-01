@@ -304,7 +304,7 @@ export function createApp(store: Store, persistFile: string | null = dataFile, o
   return createServer(async (req, res: ServerResponse) => {
     try {
       const url = new URL(req.url ?? '/', 'http://x');
-      if (url.pathname === '/healthz') { res.writeHead(200, { 'content-type': 'application/json' }); res.end('{"ok":true}'); return; }
+      if (url.pathname === '/healthz') { res.writeHead(200, { 'content-type': 'application/json' }); res.end(JSON.stringify({ ok: true, commit: process.env.RENDER_GIT_COMMIT?.slice(0, 7) ?? null })); return; }
       if (url.pathname.startsWith('/api/')) {
         // CSRF: a browser cross-site request carries an Origin that differs from Host
         const origin = req.headers.origin;
@@ -356,6 +356,7 @@ if (process.argv[1]?.endsWith('server.ts')) {
   const envSecret = process.env.SESSION_SECRET;
   const ownerPassword = process.env.OWNER_PASSWORD;
   if (ownerPassword && ownerPassword.length < OWNER_MIN_PASSWORD) console.error(`OWNER_PASSWORD ignoré : ${OWNER_MIN_PASSWORD} caractères minimum, espace propriétaire désactivé`);
+  if (!ownerPassword) console.log('OWNER_PASSWORD absente : espace propriétaire désactivé (onglets « Mon espace » et « Configuration » masqués)');
   createApp(loadStore(), dataFile, {
     secret: envSecret && envSecret.length >= 32 ? envSecret : loadSecret(secretFile),
     ownerPassword, ownerStore: loadStore(ownerFile, blankStore), ownerFile,
